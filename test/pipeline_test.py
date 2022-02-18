@@ -9,8 +9,8 @@ import numpy as np
 
 def _test():
     pandas_df = pd.DataFrame(np.array(([1, 2, 3], [1, 5, 6], [6, 7, 8])),
-                          index=['mouse', 'rabbit', 'owl'],
-                          columns=['col1', 'col2', 'col3'])
+                             index=['mouse', 'rabbit', 'owl'],
+                             columns=['col1', 'col2', 'col3'])
 
     d = DplyFrame(pandas_df)
     output = d + apply(lambda x: x + 1) + query('col1 == 2')
@@ -26,33 +26,28 @@ def test_drop():
     })
 
     # Drop by columns
-    try:
-        df1 = DplyFrame(pandas_df)
-        output1 = df1 + drop(['col3', 'col4'], axis=1)
-        expected1 = pandas_df.drop(['col3', 'col4'], axis=1)
-        pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+    df1 = DplyFrame(pandas_df)
+    output1 = df1 + drop(['col3', 'col4'], axis=1)
+    expected1 = pandas_df.drop(['col3', 'col4'], axis=1)
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
 
-        print(pandas_df)
-        df2 = DplyFrame(pandas_df)
-        output2 = df2 + drop(columns=['col3', 'col4'])
-        expected1 = pandas_df.drop(columns=['col3', 'col4'])
-        pd.testing.assert_frame_equal(output2.pandas_df, expected1)
-    except:
-        raise 
+    print(pandas_df)
+    df2 = DplyFrame(pandas_df)
+    output2 = df2 + drop(columns=['col3', 'col4'])
+    expected1 = pandas_df.drop(columns=['col3', 'col4'])
+    pd.testing.assert_frame_equal(output2.pandas_df, expected1)
 
     # Drop by rows
-    try:
-        df3 = DplyFrame(pandas_df)
-        output3 = df3 + drop([0, 1])
-        expected3 = pandas_df.drop([0, 1])
-        pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+    df3 = DplyFrame(pandas_df)
+    output3 = df3 + drop([0, 1])
+    expected3 = pandas_df.drop([0, 1])
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
-        df4 = DplyFrame(pandas_df)
-        output4 = df4 + drop(index=[2, 3])
-        expected4 = pandas_df.drop(index=[2, 3])
-        pd.testing.assert_frame_equal(output4.pandas_df, expected4)
-    except:
-        raise
+    df4 = DplyFrame(pandas_df)
+    output4 = df4 + drop(index=[2, 3])
+    expected4 = pandas_df.drop(index=[2, 3])
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
 
 if __name__ == '__main__':
     test_drop()
