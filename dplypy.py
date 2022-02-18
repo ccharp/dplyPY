@@ -3,11 +3,10 @@ import functools as ft
 import numpy as np
 from typing import AnyStr, Callable
 
-
 class DplyFrame:
     def __init__(self, pandas_df: pd.DataFrame):
         self.pandas_df = pandas_df
-        self.index = pandas_df.index
+        self.index = pandas_df.index # TODO: is index necessary?
 
     def __eq__(self, other: pd.DataFrame):
         return self.pandas_df == other.pandas_df
@@ -22,9 +21,5 @@ class DplyFrame:
         return d2_func(self)
  
     def __repr__(self):
-        self.pandas_df.to_string() # TODO: investigate: broken. Low priority
+        return self.pandas_df.to_string() # TODO: investigate: broken. Low priority
 
-
-def read_csv():
-    # TODO:
-    return None
