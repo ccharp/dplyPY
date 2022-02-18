@@ -31,7 +31,6 @@ def test_drop():
     expected1 = pandas_df.drop(['col3', 'col4'], axis=1)
     pd.testing.assert_frame_equal(output1.pandas_df, expected1)
 
-    print(pandas_df)
     df2 = DplyFrame(pandas_df)
     output2 = df2 + drop(columns=['col3', 'col4'])
     expected1 = pandas_df.drop(columns=['col3', 'col4'])
