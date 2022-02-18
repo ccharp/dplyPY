@@ -1,6 +1,8 @@
 import pandas as pd
-from dplypy import DplyFrame
-from pipeline import query, apply
+from src.dplypy import DplyFrame
+from src.pipeline import query, apply, drop
+import numpy as np
+
 
 # TODO: idomatic python testing
 #       which testing framework should we use?
@@ -15,5 +17,42 @@ def _test():
     print(output.pandas_df)
 
 
+def test_drop():
+    pandas_df = pd.DataFrame(data={
+        'col1': [0, 1, 2, 3],
+        'col2': [3, 4, 5, 6],
+        'col3': [6, 7, 8, 9],
+        'col4': [9, 10, 11, 12]
+    })
+
+    # Drop by columns
+    try:
+        df1 = DplyFrame(pandas_df)
+        output1 = df1 + drop(['col3', 'col4'], axis=1)
+        expected1 = pandas_df.drop(['col3', 'col4'], axis=1)
+        pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+        print(pandas_df)
+        df2 = DplyFrame(pandas_df)
+        output2 = df2 + drop(columns=['col3', 'col4'])
+        expected1 = pandas_df.drop(columns=['col3', 'col4'])
+        pd.testing.assert_frame_equal(output2.pandas_df, expected1)
+    except:
+        raise 
+
+    # Drop by rows
+    try:
+        df3 = DplyFrame(pandas_df)
+        output3 = df3 + drop([0, 1])
+        expected3 = pandas_df.drop([0, 1])
+        pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+        df4 = DplyFrame(pandas_df)
+        output4 = df4 + drop(index=[2, 3])
+        expected4 = pandas_df.drop(index=[2, 3])
+        pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+    except:
+        raise
+
 if __name__ == '__main__':
-    _test()
+    test_drop()

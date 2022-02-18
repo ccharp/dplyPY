@@ -22,7 +22,7 @@ class DplyFrame:
         return d2_func(self)
  
     def __repr__(self):
-        self.pandas_df.to_string() # TODO: investigate: broken. Low priority
+        return self.pandas_df.to_string() # TODO: investigate: broken. Low priority
 
 
 def read_csv():
