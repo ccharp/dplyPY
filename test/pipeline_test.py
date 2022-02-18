@@ -13,3 +13,7 @@ def _test():
     d = DplyFrame(pandas_df)
     output = d + apply(lambda x: x + 1) + query('col1 == 2')
     print(output.pandas_df)
+
+
+if __name__ == '__main__':
+    print()
