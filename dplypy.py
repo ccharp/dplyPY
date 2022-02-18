@@ -1,40 +1,30 @@
 import pandas as pd
 import functools as ft
 import numpy as np
+from typing import AnyStr, Callable
 
-def query(query_str):
-    return lambda d1: D(d1.df.query(query_str))
 
-def apply(func, axis=0, **kwargs): # TODO: CSC: use kwargs... couldn't quickly figure out how to do it
-    return lambda d1: D(d1.df.apply(func=func, axis=axis)) 
+class DplyFrame:
+    def __init__(self, pandas_df: pd.DataFrame):
+        self.pandas_df = pandas_df
+        self.index = pandas_df.index
 
-class D:
-    def __init__(self, df):
-        self.df = df
-        self.index = df.index
-
-    def __eq__(self, other):
-        return self.df == other.df
+    def __eq__(self, other: pd.DataFrame):
+        return self.pandas_df == other.pandas_df
 
     # TODO: implement other boolean operators
 
-    def __getitem__(self, item):
-        return self.df[item]
+    def __getitem__(self, item): # Item is polymorphic. Could be anything accepted by pd.DataFrame.__getitem__()
+        return self.pandas_df[item]
 
+    # TODO: comment exlpaining how this works
     def __add__(self, d2_func):
         return d2_func(self)
-        
+ 
     def __repr__(self):
-        self.df.to_string() # TODO: broken
+        self.pandas_df.to_string() # TODO: investigate: broken. Low priority
 
-def _test():
-    df_old = pd.DataFrame(np.array(([1, 2, 3], [1, 5, 6], [6, 7, 8])),
-                          index=['mouse', 'rabbit', 'owl'],
-                          columns=['col1', 'col2', 'col3'])
 
-    d = D(df_old)
-
-    output = (d + apply(lambda x: x + 1)) + query('col1 == 2')
-    print(output.df)
-
-_test()
+def read_csv():
+    # TODO:
+    return None
