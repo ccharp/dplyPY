@@ -8,8 +8,6 @@ def apply(func, axis=0, **kwargs): # TODO: CSC: use kwargs... couldn't quickly f
 
 """
 TODO: 
-- what functionality to we implement in addition to query and apply?
-    - e.g. drop, read file, write file, plot, melt, pivot, one-hot-encoding, concat, merge, unique, check null, etc
 - API for plotting intermediate transformations?
     - Summary stats at each step (mean, variance, quartiles..)
     - Preset visualization functions (scatter and line plots?)
