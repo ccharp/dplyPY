@@ -22,4 +22,3 @@ class DplyFrame:
  
     def __repr__(self):
         return self.pandas_df.to_string() # TODO: investigate: broken. Low priority
-
