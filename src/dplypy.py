@@ -5,23 +5,41 @@ from typing import AnyStr, Callable
 
 
 class DplyFrame:
+    """
+    pandas.DataFrame wrapper for implementing DyplyR style data pipelines.
+
+    Here, we simulate dplyr's `%>%` with `+`. See pipeline.py for pipeline-function-specific documentation.
+    """
+
     def __init__(self, pandas_df: pd.DataFrame):
+        """
+        Create a DplyFrame from a pandas DataFrame
+
+        :param pandas_df: the data frame we wish to wrap
+        """
         self.pandas_df = pandas_df
-        self.index = pandas_df.index  # TODO: is index necessary?
 
     def __eq__(self, other: pd.DataFrame):
         return self.pandas_df == other.pandas_df
 
-    # TODO: implement other boolean operators
-
-    def __getitem__(
-        self, item
-    ):  # Item is polymorphic. Could be anything accepted by pd.DataFrame.__getitem__()
+    def __getitem__(self, item):
         return self.pandas_df[item]
 
-    # TODO: comment exlpaining how this works
-    def __add__(self, d2_func):
-        return d2_func(self)
+    def __add__(d1, d2_func):
+        """
+        Chain two or more pipline operations together.
+
+        Important: here, `+` operator is NOT commutative
+
+        Example:
+        ```
+        read_csv("foo.csv") + drop(['X']) + query("A" > 1337) + write_csv("transformed_foo.csv")
+        ```
+
+        :param d1: self--the forst operand of `+`
+        :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function) returned by a pipeline method
+        """
+        return d2_func(d1)
 
     def __repr__(self):
-        return self.pandas_df.to_string()  # TODO: investigate: broken. Low priority
+        return self.pandas_df.to_string()
