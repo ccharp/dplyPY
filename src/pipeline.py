@@ -1,11 +1,15 @@
 from src.dplypy import DplyFrame
 
 
-def query(query_str: str):  # summary_type: e.g. mean, variance, other descriptive stats, num rows,
+def query(
+    query_str: str,
+):  # summary_type: e.g. mean, variance, other descriptive stats, num rows,
     return lambda d1: DplyFrame(d1.pandas_df.query(query_str))
 
 
-def apply(func, axis=0, **kwargs):  # TODO: CSC: use kwargs... couldn't quickly figure out how to do it
+def apply(
+    func, axis=0, **kwargs
+):  # TODO: CSC: use kwargs... couldn't quickly figure out how to do it
     return lambda d1: DplyFrame(d1.pandas_df.apply(func=func, axis=axis))
 
 
@@ -61,15 +65,6 @@ def write_file(file_path, sep=',', index=True):
         print("Unfortunately we do not support this file type. Please write the files with the following types: \n")
         print(".csv\t.json\t.pkl\t.xlsx")
 
-"""
-TODO: 
-- API for plotting intermediate transformations?
-    - Summary stats at each step (mean, variance, quartiles..)
-    - Preset visualization functions (scatter and line plots?)
-- Fix DplyFrame print bug -- is it still an issue?
-- Create a package for all this stuff
-- Implement Unit tests in pytest
-- API docs?  
-
-dfply_frame + query(asdfasdf) + apply(f) + write(file.txt) + dropna() + hist(args) + query(asdfjkl) + hist(args) + summary_stats()
-"""
+    return lambda d1: DplyFrame(
+        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
+    )
