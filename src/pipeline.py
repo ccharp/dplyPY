@@ -27,3 +27,44 @@ def drop(labels=None, axis=0, index=None, columns=None):
     return lambda d1: DplyFrame(
         d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
     )
+
+
+def check_null(column=None, choice=1):
+    """
+    Check null values in a dataframe or a series in a dataframe if column is provided properly:
+    1. Check if there is any null value in a dataframe / series
+    2. Check the total number of null values in a dataframe / series
+    Return: True/False for check any. and numeric value for check total.
+    :param column: one potential column name of a dataframe
+    :param choice: 1 means check any, 2 means check total, otherwise raise an error
+    """
+
+    def total_null(d1, column=None):
+        if column is not None:
+            return d1.pandas_df[column].isna().sum()
+        else:
+            return d1.pandas_df.isnull().sum().sum()
+
+    def any_null(d1, column=None):
+        return total_null(d1, column) > 0
+
+    def not_found():
+        raise KeyError("Column name not found")
+
+    def wrong_choice():
+        raise ValueError("Not supported choice input")
+
+    if choice == 1:
+        return (
+            lambda d1: any_null(d1, column)
+            if ((column is None) or (column in d1))
+            else not_found()
+        )
+    elif choice == 2:
+        return (
+            lambda d1: total_null(d1, column)
+            if ((column is None) or (column in d1))
+            else not_found()
+        )
+    else:
+        return lambda d1: wrong_choice()
