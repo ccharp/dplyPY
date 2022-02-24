@@ -10,6 +10,7 @@ Functions defined in this module are tightly coupled with the `DplyFrame` class 
 """
 
 from src.dplypy import DplyFrame
+from typing import Callable
 
 
 def query(query_str: str):
@@ -42,10 +43,12 @@ def drop(labels=None, axis=0, index=None, columns=None):
     :param index: the label names of the rows to be dropped. Single or list-like.
     :param columns: the column names of the rows to be dropped. Single or list-like.
     """
-    return lambda d1: DplyFrame(d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns))
+    return lambda d1: DplyFrame(
+        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
+    )
 
 
-def write_file(file_path, sep=',', index=True):
+def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
 
@@ -55,6 +58,7 @@ def write_file(file_path, sep=',', index=True):
     :param sep: the separator for csv files. Default to be comma
     :param index: Write the row name by the index of the DplyFrame. Default to be true.
     """
+
     def to_csv(d1):
         d1.pandas_df.to_csv(file_path, sep=sep, index=index)
         return d1
@@ -71,13 +75,29 @@ def write_file(file_path, sep=',', index=True):
         d1.pandas_df.to_pickle(file_path)
         return d1
 
-    if file_path.endswith('.csv'):
+    if file_path.endswith(".csv"):
         return to_csv
-    elif file_path.endswith('.xlsx'):
+    elif file_path.endswith(".xlsx"):
         return to_excel
-    elif file_path.endswith('.json'):
+    elif file_path.endswith(".json"):
         return to_json
-    elif file_path.endswith('.pkl'):
+    elif file_path.endswith(".pkl"):
         return to_pickle
     else:
-        raise IOError('The file format is not supported.')
+        raise IOError("The file format is not supported.")
+
+
+def side_effect(
+    side_effect_func: Callable[[DplyFrame], None]
+) -> Callable[[DplyFrame], DplyFrame]:
+    """
+    Allows user to inject aribitrary side effects into the pipeline, e.g. render a plot or do network operation
+
+    :param side_effect_func: performs the side effect
+    """
+
+    def d2_func(d1):
+        side_effect_func(d1)
+        return d1
+
+    return d2_func
