@@ -1,7 +1,9 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-from src.pipeline import query, apply, drop, check_null
+from src.pipeline import query, apply, drop, write_file, check_null
 import numpy as np
+import os
+import pytest
 
 
 def _test():  # TODO: convert to pytest
@@ -44,8 +46,8 @@ def test_drop():
     pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
     df4 = DplyFrame(pandas_df)
-    output4 = df4 + drop(index=[2, 3])
-    expected4 = pandas_df.drop(index=[2, 3])
+    output4 = df4 + drop(index=[2, 3]) + drop(index=[1])
+    expected4 = pandas_df.drop(index=[1, 2, 3])
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
 
@@ -130,6 +132,65 @@ def test_check_null():
     assert output12 == expected12
 
 
+def test_write_file():
+    pandas_df = pd.DataFrame(
+        data={
+            "col1": [0, 1, 2, 3],
+            "col2": [3, 4, 5, 6],
+            "col3": [6, 7, 8, 9],
+            "col4": [9, 10, 11, 12],
+        }
+    )
+
+    df = DplyFrame(pandas_df)
+
+    # To csv file
+    (
+        df
+        + write_file("df_no_index.csv", sep=",", index=False)
+        + write_file("df_with_index.csv", sep=",", index=True)
+    )
+    read_df = pd.read_csv("df_no_index.csv", sep=",")
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # Without index
+    os.remove("df_no_index.csv")
+
+    read_df = pd.read_csv("df_with_index.csv", sep=",", index_col=0)
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # With index
+    os.remove("df_with_index.csv")
+
+    # To excel file
+    # Requires dependency openpyxl
+    (
+        df
+        + write_file("df_no_index.xlsx", index=False)
+        + write_file("df_with_index.xlsx", index=True)
+    )
+    read_df = pd.read_excel("df_no_index.xlsx", engine="openpyxl")
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # Without index
+    os.remove("df_no_index.xlsx")
+
+    read_df = pd.read_excel("df_with_index.xlsx", index_col=0, engine="openpyxl")
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # Without index
+    os.remove("df_with_index.xlsx")
+
+    # To json
+    df + write_file("df_no_index.json")
+    read_df = pd.read_json("df_no_index.json")
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # Without index
+    os.remove("df_no_index.json")
+
+    # To pickle
+    df + write_file("df_no_index.pkl")
+    read_df = pd.read_pickle("df_no_index.pkl")
+    pd.testing.assert_frame_equal(df.pandas_df, read_df)  # Without index
+    os.remove("df_no_index.pkl")
+
+    # Error case
+    with pytest.raises(IOError) as context:
+        new_df = df + write_file("df.abc")
+
+
 if __name__ == "__main__":
     test_drop()
     test_check_null()
+    test_write_file()
