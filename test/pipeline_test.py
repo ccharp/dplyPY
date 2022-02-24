@@ -1,6 +1,6 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-from src.pipeline import query, apply, drop, write_file, check_null
+from src.pipeline import query, apply, drop, merge, write_file, check_null
 import numpy as np
 import os
 import pytest
@@ -129,18 +129,55 @@ def test_check_null():
     output12 = df2 + check_null(column="col5", choice=2)
     expected12 = 0
     assert output12 == expected12
-
-
-def test_write_file():
-    pandas_df = pd.DataFrame(
-        data={
-            "col1": [0, 1, 2, 3],
-            "col2": [3, 4, 5, 6],
-            "col3": [6, 7, 8, 9],
-            "col4": [9, 10, 11, 12],
-        }
-    )
     
+def test_merge():
+    df_l = DplyFrame(
+        pd.DataFrame(
+            data={
+                "common": [1, 2, 3, 4],
+                "left_index": ["a", "b", "c", "d"],
+                "left_key": [3, 4, 7, 6],
+                "col3": [6, 7, 8, 9],
+                "col4": [9, 10, 11, 12],
+            }
+        )
+    )
+    df_r = DplyFrame(
+        pd.DataFrame(
+            data={
+                "common": [1, 2, 3, 4],
+                "right_index": ["a", "b", "foo", "d"],
+                "right_key": [3, 4, 5, 6],
+                "col3": [1, 2, 3, 4],
+                "col4": [5, 6, 7, 8],
+            }
+        )
+    )
+
+    output1 = df_l + merge(df_r, on="common")
+    expected1 = df_l.pandas_df.merge(df_r.pandas_df, on="common")
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output1 = df_l + merge(df_r, on="common", sort=True)
+    expected1 = df_l.pandas_df.merge(df_r.pandas_df, on="common", sort=True)
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df_l + merge(
+        df_r, left_on="left_key", right_on="right_key", suffixes=("_foo_x", "_foo_y")
+    )
+    expected2 = df_l.pandas_df.merge(
+        df_r.pandas_df,
+        left_on="left_key",
+        right_on="right_key",
+        suffixes=("_foo_x", "_foo_y"),
+    )
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    output3 = df_l + merge(df_r, left_index=True, right_index=True)
+    expected3 = df_l.pandas_df.merge(df_r.pandas_df, left_index=True, right_index=True)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+
 def test_write_file():
     pandas_df = pd.DataFrame(data={
         'col1': [0, 1, 2, 3],
@@ -199,4 +236,5 @@ def test_write_file():
 if __name__ == '__main__':
     test_drop()
     test_check_null()
+    test_merge()
     test_write_file()
