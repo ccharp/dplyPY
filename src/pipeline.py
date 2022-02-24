@@ -57,13 +57,13 @@ def check_null(column=None, choice=1):
     if choice == 1:
         return (
             lambda d1: any_null(d1, column)
-            if ((column is None) or (column in d1))
+            if ((column is None) or (column in d1.pandas_df))
             else not_found()
         )
     elif choice == 2:
         return (
             lambda d1: total_null(d1, column)
-            if ((column is None) or (column in d1))
+            if ((column is None) or (column in d1.pandas_df))
             else not_found()
         )
     else:

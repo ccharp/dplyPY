@@ -60,47 +60,47 @@ def test_check_null():
     expected1 = True
     assert output1 == expected1
 
-    # output2 = df1+check_null(column = 'col1')
-    # expected2 = True
-    # assert output2 == expected2
+    output2 = df1 + check_null(column="col1")
+    expected2 = True
+    assert output2 == expected2
 
-    # output3 = df1+check_null(column = 'col2')
-    # expected3 = False
-    # assert output3 == expected3
+    output3 = df1 + check_null(column="col2")
+    expected3 = False
+    assert output3 == expected3
 
-    # output4 = df1+check_null(column = 'col3')
-    # expected4 = True
-    # assert output4 == expected4
+    output4 = df1 + check_null(column="col3")
+    expected4 = True
+    assert output4 == expected4
 
-    # try:
-    #     df1+check_null(column = 'col4')
-    # except KeyError:
-    #     pass
-    # else:
-    #     raise AssertionError("KeyError was not raised")
+    try:
+        df1 + check_null(column="col4")
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
 
     output5 = df1 + check_null(choice=2)
     expected5 = 3
     assert output5 == expected5
 
-    # output6 = df1+check_null(column = 'col1', choice = 2)
-    # expected6 = 1
-    # assert output6 == expected6
+    output6 = df1 + check_null(column="col1", choice=2)
+    expected6 = 1
+    assert output6 == expected6
 
-    # output7 = df1+check_null(column = 'col2', choice = 2)
-    # expected7 = 0
-    # assert output7 == expected7
+    output7 = df1 + check_null(column="col2", choice=2)
+    expected7 = 0
+    assert output7 == expected7
 
-    # output8 = df1+check_null(column = 'col3', choice = 2)
-    # expected8 = 2
-    # assert output8 == expected8
+    output8 = df1 + check_null(column="col3", choice=2)
+    expected8 = 2
+    assert output8 == expected8
 
-    # try:
-    #     df1+check_null(column = 'col4', choice = 2)
-    # except KeyError:
-    #     pass
-    # else:
-    #     raise AssertionError("KeyError was not raised")
+    try:
+        df1 + check_null(column="col4", choice=2)
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
 
     try:
         df1 + check_null(choice=3)
@@ -117,17 +117,17 @@ def test_check_null():
     expected9 = False
     assert output9 == expected9
 
-    # output10 = df2+check_null(column = "col5")
-    # expected10 = False
-    # assert output10 == expected10
+    output10 = df2 + check_null(column="col5")
+    expected10 = False
+    assert output10 == expected10
 
     output11 = df2 + check_null(choice=2)
     expected11 = 0
     assert output11 == expected11
 
-    # output12 = df2+checknull(column = "col5", choice = 2)
-    # expected12 = 0
-    # assert output12 == expected12
+    output12 = df2 + check_null(column="col5", choice=2)
+    expected12 = 0
+    assert output12 == expected12
 
 
 if __name__ == "__main__":
