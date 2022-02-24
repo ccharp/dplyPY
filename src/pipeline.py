@@ -44,7 +44,7 @@ def write_file(file_path, sep=',', index=True):
     def to_json(d1):
         d1.pandas_df.to_json(file_path)
         return d1
-    
+
     def to_pickle(d1):
         d1.pandas_df.to_pickle(file_path)
         return d1
@@ -58,8 +58,8 @@ def write_file(file_path, sep=',', index=True):
     elif file_path.endswith('.pkl'):
         return to_pickle
     else:
-        print("Unfortunately we do not support this file type. Please write the files with the following types: \n")
-        print(".csv\t.json\t.pkl\t.xlsx")
+        raise Exception('The file format is not supported.')
+
 
 """
 TODO: 

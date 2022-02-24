@@ -89,5 +89,10 @@ def test_write_file():
     pd.testing.assert_frame_equal(df.pandas_df, read_df)    # Without index
     os.remove('df_no_index.pkl')
 
+    # Error case
+    new_df = df + write_file('df.abc')
+    
+    
+
 if __name__ == '__main__':
     test_drop()
