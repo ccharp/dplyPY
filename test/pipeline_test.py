@@ -62,7 +62,8 @@ def test_write_file():
     df = DplyFrame(pandas_df)
 
     # To csv file
-    df + write_file('df_no_index.csv', sep=',', index=False) + write_file('df_with_index.csv', sep=',', index=True)
+    df + write_file('df_no_index.csv', sep=',', index=False) + \
+        write_file('df_with_index.csv', sep=',', index=True)
     read_df = pd.read_csv('df_no_index.csv', sep=',')
     pd.testing.assert_frame_equal(df.pandas_df, read_df)    # Without index
     os.remove('df_no_index.csv')
@@ -73,12 +74,14 @@ def test_write_file():
 
     # To excel file
     # Requires dependency openpyxl
-    df + write_file('df_no_index.xlsx', index=False) + write_file('df_with_index.xlsx', index=True)
+    df + write_file('df_no_index.xlsx', index=False) + \
+        write_file('df_with_index.xlsx', index=True)
     read_df = pd.read_excel('df_no_index.xlsx', engine='openpyxl')
     pd.testing.assert_frame_equal(df.pandas_df, read_df)    # Without index
     os.remove('df_no_index.xlsx')
 
-    read_df = pd.read_excel('df_with_index.xlsx', index_col=0, engine='openpyxl')
+    read_df = pd.read_excel('df_with_index.xlsx',
+                            index_col=0, engine='openpyxl')
     pd.testing.assert_frame_equal(df.pandas_df, read_df)    # Without index
     os.remove('df_with_index.xlsx')
 
@@ -98,9 +101,6 @@ def test_write_file():
     with pytest.raises(IOError) as context:
         new_df = df + write_file('df.abc')
 
-        
-    
-    
 
 if __name__ == '__main__':
     test_drop()

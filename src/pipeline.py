@@ -63,8 +63,3 @@ def write_file(file_path, sep=',', index=True):
         return to_pickle
     else:
         raise IOError('The file format is not supported.')
-
-
-    return lambda d1: DplyFrame(
-        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
-    )
