@@ -58,7 +58,7 @@ def write_file(file_path, sep=',', index=True):
     elif file_path.endswith('.pkl'):
         return to_pickle
     else:
-        raise Exception('The file format is not supported.')
+        raise IOError('The file format is not supported.')
 
 
 """

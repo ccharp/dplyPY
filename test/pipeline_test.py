@@ -3,6 +3,7 @@ from src.dplypy import DplyFrame
 from src.pipeline import query, apply, drop, write_file
 import numpy as np
 import os
+import pytest
 
 
 def _test(): # TODO: convert to pytest 
@@ -90,7 +91,10 @@ def test_write_file():
     os.remove('df_no_index.pkl')
 
     # Error case
-    new_df = df + write_file('df.abc')
+    with pytest.raises(IOError) as context:
+        new_df = df + write_file('df.abc')
+
+        
     
     
 
