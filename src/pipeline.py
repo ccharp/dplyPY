@@ -24,10 +24,6 @@ def drop(labels=None, axis=0, index=None, columns=None):
     :param index: the label names of the rows to be dropped. Single or list-like.
     :param columns: the column names of the rows to be dropped. Single or list-like.
     """
-    return lambda d1: DplyFrame(
-        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
-    )
-
 
 def check_null(column=None, choice=1):
     """
@@ -70,7 +66,7 @@ def check_null(column=None, choice=1):
         return lambda d1: wrong_choice()
 
 
-def write_file(file_path, sep=",", index=True):
+def write_file(file_path, sep=',', index=True):
     """
     Write DplyFrame to file.
 
@@ -80,7 +76,7 @@ def write_file(file_path, sep=",", index=True):
     :param sep: the separator for csv files. Default to be comma
     :param index: Write the row name by the index of the DplyFrame. Default to be true.
     """
-
+  
     def to_csv(d1):
         d1.pandas_df.to_csv(file_path, sep=sep, index=index)
         return d1
@@ -96,7 +92,7 @@ def write_file(file_path, sep=",", index=True):
     def to_pickle(d1):
         d1.pandas_df.to_pickle(file_path)
         return d1
-
+      
     if file_path.endswith(".csv"):
         return to_csv
     elif file_path.endswith(".xlsx"):
@@ -107,3 +103,4 @@ def write_file(file_path, sep=",", index=True):
         return to_pickle
     else:
         raise IOError("The file format is not supported.")
+

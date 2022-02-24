@@ -50,7 +50,6 @@ def test_drop():
     expected4 = pandas_df.drop(index=[1, 2, 3])
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
-
 def test_check_null():
     pandas_df1 = pd.DataFrame(
         data={"col1": [1, 2, 3, None], "col2": [1, 2, 3, 4], "col3": [None, 1, None, 2]}
@@ -141,6 +140,14 @@ def test_write_file():
             "col4": [9, 10, 11, 12],
         }
     )
+    
+def test_write_file():
+    pandas_df = pd.DataFrame(data={
+        'col1': [0, 1, 2, 3],
+        'col2': [3, 4, 5, 6],
+        'col3': [6, 7, 8, 9],
+        'col4': [9, 10, 11, 12]
+    })
 
     df = DplyFrame(pandas_df)
 
@@ -189,8 +196,7 @@ def test_write_file():
     with pytest.raises(IOError) as context:
         new_df = df + write_file("df.abc")
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     test_drop()
     test_check_null()
     test_write_file()
