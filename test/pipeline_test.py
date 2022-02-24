@@ -55,7 +55,7 @@ def test_merge():
             data={
                 "common": [1, 2, 3, 4],
                 "left_index": ["a", "b", "c", "d"],
-                "left_key": [3, 4, 5, 6],
+                "left_key": [3, 4, 7, 6],
                 "col3": [6, 7, 8, 9],
                 "col4": [9, 10, 11, 12],
             }
@@ -65,7 +65,7 @@ def test_merge():
         pd.DataFrame(
             data={
                 "common": [1, 2, 3, 4],
-                "right_index": ["a", "b", "c", "d"],
+                "right_index": ["a", "b", "foo", "d"],
                 "right_key": [3, 4, 5, 6],
                 "col3": [1, 2, 3, 4],
                 "col4": [5, 6, 7, 8],
@@ -92,11 +92,9 @@ def test_merge():
     )
     pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
-    output2 = df_l + merge(df_r, left_index=True, right_index=True)
-    expected2 = df_l.pandas_df.merge(
-        df_r.pandas_df, left_on="left_key", right_on="right_key"
-    )
-    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+    output3 = df_l + merge(df_r, left_index=True, right_index=True)
+    expected3 = df_l.pandas_df.merge(df_r.pandas_df, left_index=True, right_index=True)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
 
 if __name__ == "__main__":
