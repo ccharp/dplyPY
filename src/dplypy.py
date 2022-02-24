@@ -7,7 +7,6 @@ from typing import AnyStr, Callable
 class DplyFrame:
     def __init__(self, pandas_df: pd.DataFrame):
         self.pandas_df = pandas_df
-        self.index = pandas_df.index  # TODO: is index necessary?
 
     def __eq__(self, other: pd.DataFrame):
         return self.pandas_df == other.pandas_df
