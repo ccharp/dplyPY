@@ -1,6 +1,14 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-from src.pipeline import query, apply, drop, merge, write_file, check_null
+from src.pipeline import (
+    query,
+    apply,
+    drop,
+    merge,
+    write_file,
+    check_null_total,
+    check_null_any,
+)
 import numpy as np
 import os
 import pytest
@@ -50,6 +58,7 @@ def test_drop():
     expected4 = pandas_df.drop(index=[1, 2, 3])
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
+
 def test_check_null():
     pandas_df1 = pd.DataFrame(
         data={"col1": [1, 2, 3, None], "col2": [1, 2, 3, 4], "col3": [None, 1, None, 2]}
@@ -57,79 +66,73 @@ def test_check_null():
 
     df1 = DplyFrame(pandas_df1)
 
-    output1 = df1 + check_null()
+    output1 = df1 + check_null_any()
     expected1 = True
     assert output1 == expected1
 
-    output2 = df1 + check_null(column="col1")
+    output2 = df1 + check_null_any(column="col1")
     expected2 = True
     assert output2 == expected2
 
-    output3 = df1 + check_null(column="col2")
+    output3 = df1 + check_null_any(column="col2")
     expected3 = False
     assert output3 == expected3
 
-    output4 = df1 + check_null(column="col3")
+    output4 = df1 + check_null_any(column="col3")
     expected4 = True
     assert output4 == expected4
 
     try:
-        df1 + check_null(column="col4")
+        df1 + check_null_any(column="col4")
     except KeyError:
         pass
     else:
         raise AssertionError("KeyError was not raised")
 
-    output5 = df1 + check_null(choice=2)
+    output5 = df1 + check_null_total()
     expected5 = 3
     assert output5 == expected5
 
-    output6 = df1 + check_null(column="col1", choice=2)
+    output6 = df1 + check_null_total(column="col1")
     expected6 = 1
     assert output6 == expected6
 
-    output7 = df1 + check_null(column="col2", choice=2)
+    output7 = df1 + check_null_total(column="col2")
     expected7 = 0
     assert output7 == expected7
 
-    output8 = df1 + check_null(column="col3", choice=2)
+    output8 = df1 + check_null_total(column="col3")
     expected8 = 2
     assert output8 == expected8
 
     try:
-        df1 + check_null(column="col4", choice=2)
+        df1 + check_null_total(column="col4")
     except KeyError:
         pass
     else:
         raise AssertionError("KeyError was not raised")
-
-    try:
-        df1 + check_null(choice=3)
-    except ValueError:
-        pass
-    else:
-        raise AssertionError("ValueError was not raised")
 
     pandas_df2 = pd.DataFrame(data={"col5": [1, 2, 3, 4], "col6": [5, 6, 7, 8]})
 
     df2 = DplyFrame(pandas_df2)
 
-    output9 = df2 + check_null()
+    output9 = df2 + check_null_any()
     expected9 = False
     assert output9 == expected9
 
-    output10 = df2 + check_null(column="col5")
+    output10 = df2 + check_null_any(column="col5")
     expected10 = False
     assert output10 == expected10
 
-    output11 = df2 + check_null(choice=2)
+    output11 = df2 + check_null_total()
     expected11 = 0
     assert output11 == expected11
 
-    output12 = df2 + check_null(column="col5", choice=2)
+    output12 = df2 + check_null_total(column="col5")
     expected12 = 0
     assert output12 == expected12
-    
+
+
 def test_merge():
     df_l = DplyFrame(
         pd.DataFrame(
@@ -179,12 +182,14 @@ def test_merge():
 
 
 def test_write_file():
-    pandas_df = pd.DataFrame(data={
-        'col1': [0, 1, 2, 3],
-        'col2': [3, 4, 5, 6],
-        'col3': [6, 7, 8, 9],
-        'col4': [9, 10, 11, 12]
-    })
+    pandas_df = pd.DataFrame(
+        data={
+            "col1": [0, 1, 2, 3],
+            "col2": [3, 4, 5, 6],
+            "col3": [6, 7, 8, 9],
+            "col4": [9, 10, 11, 12],
+        }
+    )
 
     df = DplyFrame(pandas_df)
 
@@ -233,7 +238,8 @@ def test_write_file():
     with pytest.raises(IOError) as context:
         new_df = df + write_file("df.abc")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_drop()
     test_check_null()
     test_merge()

@@ -42,46 +42,58 @@ def drop(labels=None, axis=0, index=None, columns=None):
     :param index: the label names of the rows to be dropped. Single or list-like.
     :param columns: the column names of the rows to be dropped. Single or list-like.
     """
+    return lambda d1: DplyFrame(
+        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
+    )
 
-def check_null(column=None, choice=1):
+
+def _not_found():
     """
-    Check null values in a dataframe or a series in a dataframe if column is provided properly:
-    1. Check if there is any null value in a dataframe / series
-    2. Check the total number of null values in a dataframe / series
-    Return: True/False for check any. and numeric value for check total.
+    Helper function for check_null_total and check_null_any to raise column not found error
+    """
+    raise KeyError("Column name not found")
+
+
+def _total_null(d1, column=None):
+    """
+    Helper function for check_null_total and check_null_any
+    Return: a nonnegative integer that is the total number of null values in a dataframe or a series in a dataframe
+    :param d1: a dplypy object
     :param column: one potential column name of a dataframe
-    :param choice: 1 means check any, 2 means check total, otherwise raise an error
+    """
+    if column is not None:
+        return d1.pandas_df[column].isna().sum()
+    else:
+        return d1.pandas_df.isnull().sum().sum()
+
+
+def check_null_total(column=None):
+    """
+    Get total number of null values in a dataframe or a series in a dataframe if column is provided properly
+    Return: a nonnegative integer or an error
+    :param column: one potential column name of a dataframe
     """
 
-    def total_null(d1, column=None):
-        if column is not None:
-            return d1.pandas_df[column].isna().sum()
-        else:
-            return d1.pandas_df.isnull().sum().sum()
+    return (
+        lambda d1: _total_null(d1, column)
+        if ((column is None) or (column in d1.pandas_df))
+        else _not_found()
+    )
 
-    def any_null(d1, column=None):
-        return total_null(d1, column) > 0
 
-    def not_found():
-        raise KeyError("Column name not found")
+def check_null_any(column=None):
+    """
+    Check if there exists at least one null value in a dataframe or a series in a dataframe if column is provided properly
+    Return: True/False
+    :param column: one potential column name of a dataframe
+    """
 
-    def wrong_choice():
-        raise ValueError("Not supported choice input")
+    return (
+        lambda d1: (_total_null(d1, column) > 0)
+        if ((column is None) or (column in d1.pandas_df))
+        else _not_found()
+    )
 
-    if choice == 1:
-        return (
-            lambda d1: any_null(d1, column)
-            if ((column is None) or (column in d1.pandas_df))
-            else not_found()
-        )
-    elif choice == 2:
-        return (
-            lambda d1: total_null(d1, column)
-            if ((column is None) or (column in d1.pandas_df))
-            else not_found()
-        )
-    else:
-        return lambda d1: wrong_choice()
 
 def merge(
     right: DplyFrame,
@@ -124,7 +136,7 @@ def merge(
     )
 
 
-def write_file(file_path, sep=',', index=True):
+def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
 
@@ -134,7 +146,7 @@ def write_file(file_path, sep=',', index=True):
     :param sep: the separator for csv files. Default to be comma
     :param index: Write the row name by the index of the DplyFrame. Default to be true.
     """
-  
+
     def to_csv(d1):
         d1.pandas_df.to_csv(file_path, sep=sep, index=index)
         return d1
@@ -150,7 +162,7 @@ def write_file(file_path, sep=',', index=True):
     def to_pickle(d1):
         d1.pandas_df.to_pickle(file_path)
         return d1
-      
+
     if file_path.endswith(".csv"):
         return to_csv
     elif file_path.endswith(".xlsx"):
@@ -161,4 +173,3 @@ def write_file(file_path, sep=',', index=True):
         return to_pickle
     else:
         raise IOError("The file format is not supported.")
-
