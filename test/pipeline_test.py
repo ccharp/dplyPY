@@ -1,6 +1,6 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-from src.pipeline import query, apply, drop, merge, write_file
+from src.pipeline import query, apply, drop, merge, write_file, melt
 import numpy as np
 import os
 import pytest
@@ -150,7 +150,27 @@ def test_write_file():
         new_df = df + write_file('df.abc')
 
 
+def test_melt():
+    pandas_df = pd.DataFrame({
+        'A': {0: 'a', 1: 'b', 2: 'c'},
+        'B': {0: 1, 1: 3, 2: 5},
+        'C': {0: 2, 1: 4, 2: 6}
+    })
+    df = DplyFrame(pandas_df)
+
+    melted_pandas_df = pd.melt(pandas_df, id_vars=['A'], value_vars=['B'])
+    melted_df = df + melt(id_vars=['A'], value_vars=['B'])
+    pd.testing.assert_frame_equal(melted_pandas_df, melted_df)
+
+    melted_pandas_df = pd.melt(pandas_df, id_vars=['A'], value_vars=['B'],
+                               var_name='myVarname', value_name='myValname')
+    melted_df = df + melt(id_vars=['A'], value_vars=['B'],
+                          var_name='myVarname', value_name='myValname')
+    pd.testing.assert_frame_equal(melted_pandas_df, melted_df)
+
+
 if __name__ == '__main__':
     test_drop()
     test_merge()
     test_write_file()
+    test_melt()
