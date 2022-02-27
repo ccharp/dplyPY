@@ -95,6 +95,34 @@ def check_null_any(column=None):
     )
 
 
+def drop_na(axis=0, how="any", thresh=None, subset=None):
+    """
+    Remove missing values
+    Return: processed dataframe
+    :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
+    :param how: drop rows/columns with any missing value ("any") or all missing values ("all") with default value "any"
+    :param thresh: drop rows/columns with at least thresh amount of missing values with default None
+    :param subset: drop missing values only in subset of rows/columns, where rows/columns correspond to the other axis, with default None
+    """
+    return lambda d1: d1.pandas_df.dropna(
+        axis=axis, how=how, thresh=thresh, subset=subset
+    )
+
+
+def fill_na(value=None, method=None, axis=0, limit=None):
+    """
+    Fill missing values with value
+    Return: processed dataframe
+    :param value: used for filling missing values, can be scaler, dict, series, or dataframe, must be None when method is not None
+    :param method: use "pad" or "ffill" to propagate last valid observation forward, and use "backfill" or "bfill" to use next valid observation to fill gap
+    :param axis: along 0/"index" or 1/"columns" to fill missing values with default value 0
+    :param limit: must be positive if not None. If method is not None, it is the maximum consecutive missing values to fill; otherwise, it fills at most limit number of missing values along the entire axis
+    """
+    return lambda d1: d1.pandas_df.fillna(
+        value=value, method=method, axis=axis, limit=limit
+    )
+
+
 def merge(
     right: DplyFrame,
     how="inner",
