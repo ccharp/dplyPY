@@ -1,6 +1,6 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-from src.pipeline import query, apply, drop, merge, write_file
+from src.pipeline import query, apply, drop, merge, write_file, pivot_table
 import numpy as np
 import os
 import pytest
@@ -95,7 +95,8 @@ def test_merge():
     pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
     output3 = df_l + merge(df_r, left_index=True, right_index=True)
-    expected3 = df_l.pandas_df.merge(df_r.pandas_df, left_index=True, right_index=True)
+    expected3 = df_l.pandas_df.merge(
+        df_r.pandas_df, left_index=True, right_index=True)
     pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
 
@@ -148,6 +149,27 @@ def test_write_file():
     # Error case
     with pytest.raises(IOError) as context:
         new_df = df + write_file('df.abc')
+
+
+def test_pivot_table():
+    pandas_df = pd.DataFrame({"A": ["foo", "foo", "foo", "foo", "foo",
+                                    "bar", "bar", "bar", "bar"],
+                              "B": ["one", "one", "one", "two", "two",
+                                    "one", "one", "two", "two"],
+                              "C": ["small", "large", "large", "small",
+                                    "small", "large", "small", "small",
+                                    "large"],
+                              "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+                              "E": [2, 4, 5, 5, 6, 6, 8, 9, 9]})
+
+    df = DplyFrame(pandas_df)
+
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.sum, fill_value=0)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.sum, fill_value=0)
+    pd.testing.assert_frame_equal(output, expected)
+
+
 
 
 if __name__ == '__main__':
