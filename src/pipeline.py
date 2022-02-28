@@ -48,6 +48,47 @@ def drop(labels=None, axis=0, index=None, columns=None):
     )
 
 
+def merge(
+    right: DplyFrame,
+    how="inner",
+    on=None,
+    left_on=None,
+    right_on=None,
+    left_index=False,
+    right_index=False,
+    sort=False,
+    suffixes=("_x", "_y"),
+):
+    """
+    Combines two DplyFrames together basaed on a join key
+
+    Functions like a SQL join.
+
+    :param right: the other DplyFrame to be merged against
+    :param how: accepts {‘left’, ‘right’, ‘outer’, ‘inner’, ‘cross’}, default ‘inner’
+    :param on: column or index to join on. Must exist in both DplyFrames
+    :param left_on: column or index in the left frame to join on
+    :param right_on: column or index in the left frame to join on
+    :param left_index: index of the left dataframe to be used as the join key
+    :param right_index: index of the right dataframe to be used as the join key
+    :param sort: if true, sort the keys in lexigraphical order
+    :param suffixes: suffix to be applied to variables in left and right DplyFrames
+    """
+    return lambda d1: DplyFrame(
+        d1.pandas_df.merge(
+            right.pandas_df,
+            how,
+            on,
+            left_on,
+            right_on,
+            left_index,
+            right_index,
+            sort,
+            suffixes,
+        )
+    )
+
+
 def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
@@ -101,3 +142,16 @@ def side_effect(
         return d1
 
     return d2_func
+
+
+def melt(id_vars=None, value_vars=None, var_name=None, value_name='value', ignore_index=True):
+    """
+    Unpivot a dataframe from wide to long format.
+
+    :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
+    :param value_vars: Columns to unpivot. Default to be all columns not in id_vars. Tuple, list or ndarray.
+    :param var_name: Name of the variable column. 
+    :param value_name: Name of the value column.
+    :param ignore_index: Original index would be ignored if True; else otherwise.
+    """
+    return lambda d1: d1.pandas_df.melt(id_vars=id_vars, value_vars=value_vars, var_name=var_name, value_name=value_name, ignore_index=ignore_index)
