@@ -201,3 +201,17 @@ def write_file(file_path, sep=",", index=True):
         return to_pickle
     else:
         raise IOError("The file format is not supported.")
+
+
+def melt(id_vars=None, value_vars=None, var_name=None, value_name='value', ignore_index=True):
+    """
+    Unpivot a dataframe from wide to long format.
+
+    :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
+    :param value_vars: Columns to unpivot. Default to be all columns not in id_vars. Tuple, list or ndarray.
+    :param var_name: Name of the variable column. 
+    :param value_name: Name of the value column.
+    :param ignore_index: Original index would be ignored if True; else otherwise.
+    """
+    return lambda d1: d1.pandas_df.melt(id_vars=id_vars, value_vars=value_vars, var_name=var_name, value_name=value_name, ignore_index=ignore_index)
+
