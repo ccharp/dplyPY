@@ -47,52 +47,23 @@ def drop(labels=None, axis=0, index=None, columns=None):
     )
 
 
-def _not_found():
+def count_null(column=None, index=None):
     """
-    Helper function for check_null_total and check_null_any to raise column not found error
-    """
-    raise KeyError("Column name not found")
-
-
-def _total_null(d1, column=None):
-    """
-    Helper function for check_null_total and check_null_any
-    Return: a nonnegative integer that is the total number of null values in a dataframe or a series in a dataframe
-    :param d1: a dplypy object
-    :param column: one potential column name of a dataframe
-    """
-    if column is not None:
-        return d1.pandas_df[column].isna().sum()
-    else:
-        return d1.pandas_df.isnull().sum().sum()
-
-
-def check_null_total(column=None):
-    """
-    Get total number of null values in a dataframe or a series in a dataframe if column is provided properly
-    Return: a nonnegative integer or an error
-    :param column: one potential column name of a dataframe
+    Get total number of null values in a dataframe, one or more rows of dataframe, or one or more columns of dataframe
+    Return: a nonnegative integer
+    :param column: one column name or one list of column names of a dataframe
+    :param index: one row name or one list of row names of a dataframe
     """
 
-    return (
-        lambda d1: _total_null(d1, column)
-        if ((column is None) or (column in d1.pandas_df))
-        else _not_found()
-    )
+    def _count_null(d1, column=None, index=None):
+        if column is not None:
+            return d1.pandas_df[column].isna().sum().sum()
+        elif index is not None:
+            return d1.pandas_df.loc[index].isna().sum().sum()
+        else:
+            return d1.pandas_df.isnull().sum().sum()
 
-
-def check_null_any(column=None):
-    """
-    Check if there exists at least one null value in a dataframe or a series in a dataframe if column is provided properly
-    Return: True/False
-    :param column: one potential column name of a dataframe
-    """
-
-    return (
-        lambda d1: (_total_null(d1, column) > 0)
-        if ((column is None) or (column in d1.pandas_df))
-        else _not_found()
-    )
+    return lambda d1: _count_null(d1, column, index)
 
 
 def drop_na(axis=0, how="any", thresh=None, subset=None):
@@ -203,15 +174,22 @@ def write_file(file_path, sep=",", index=True):
         raise IOError("The file format is not supported.")
 
 
-def melt(id_vars=None, value_vars=None, var_name=None, value_name='value', ignore_index=True):
+def melt(
+    id_vars=None, value_vars=None, var_name=None, value_name="value", ignore_index=True
+):
     """
     Unpivot a dataframe from wide to long format.
 
     :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
     :param value_vars: Columns to unpivot. Default to be all columns not in id_vars. Tuple, list or ndarray.
-    :param var_name: Name of the variable column. 
+    :param var_name: Name of the variable column.
     :param value_name: Name of the value column.
     :param ignore_index: Original index would be ignored if True; else otherwise.
     """
-    return lambda d1: d1.pandas_df.melt(id_vars=id_vars, value_vars=value_vars, var_name=var_name, value_name=value_name, ignore_index=ignore_index)
-
+    return lambda d1: d1.pandas_df.melt(
+        id_vars=id_vars,
+        value_vars=value_vars,
+        var_name=var_name,
+        value_name=value_name,
+        ignore_index=ignore_index,
+    )

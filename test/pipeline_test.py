@@ -6,11 +6,10 @@ from src.pipeline import (
     drop,
     merge,
     write_file,
-    check_null_total,
-    check_null_any,
+    count_null,
     drop_na,
     fill_na,
-    melt
+    melt,
 )
 import numpy as np
 import os
@@ -47,8 +46,8 @@ def test_drop():
 
     df2 = DplyFrame(pandas_df)
     output2 = df2 + drop(columns=["col3", "col4"])
-    expected1 = pandas_df.drop(columns=["col3", "col4"])
-    pd.testing.assert_frame_equal(output2.pandas_df, expected1)
+    expected2 = pandas_df.drop(columns=["col3", "col4"])
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
     # Drop by rows
     df3 = DplyFrame(pandas_df)
@@ -62,54 +61,54 @@ def test_drop():
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
 
-def test_check_null():
+def test_count_null():
     pandas_df1 = pd.DataFrame(
         data={"col1": [1, 2, 3, None], "col2": [1, 2, 3, 4], "col3": [None, 1, None, 2]}
     )
 
     df1 = DplyFrame(pandas_df1)
 
-    output1 = df1 + check_null_any()
-    expected1 = True
+    output1 = df1 + count_null()
+    expected1 = 3
     assert output1 == expected1
 
-    output2 = df1 + check_null_any(column="col1")
-    expected2 = True
+    output2 = df1 + count_null(column="col1")
+    expected2 = 1
     assert output2 == expected2
 
-    output3 = df1 + check_null_any(column="col2")
-    expected3 = False
+    output3 = df1 + count_null(column="col2")
+    expected3 = 0
     assert output3 == expected3
 
-    output4 = df1 + check_null_any(column="col3")
-    expected4 = True
+    output4 = df1 + count_null(column="col3")
+    expected4 = 2
     assert output4 == expected4
 
+    output5 = df1 + count_null(column=["col1", "col3"])
+    expected5 = 3
+    assert output5 == expected5
+
+    output6 = df1 + count_null(index=0)
+    expected6 = 1
+    assert output6 == expected6
+
+    output7 = df1 + count_null(index=1)
+    expected7 = 0
+    assert output7 == expected7
+
+    output8 = df1 + count_null(index=[0, 2])
+    expected8 = 2
+    assert output8 == expected8
+
     try:
-        df1 + check_null_any(column="col4")
+        df1 + count_null(column="col4")
     except KeyError:
         pass
     else:
         raise AssertionError("KeyError was not raised")
 
-    output5 = df1 + check_null_total()
-    expected5 = 3
-    assert output5 == expected5
-
-    output6 = df1 + check_null_total(column="col1")
-    expected6 = 1
-    assert output6 == expected6
-
-    output7 = df1 + check_null_total(column="col2")
-    expected7 = 0
-    assert output7 == expected7
-
-    output8 = df1 + check_null_total(column="col3")
-    expected8 = 2
-    assert output8 == expected8
-
     try:
-        df1 + check_null_total(column="col4")
+        df1 + count_null(index=4)
     except KeyError:
         pass
     else:
@@ -119,21 +118,17 @@ def test_check_null():
 
     df2 = DplyFrame(pandas_df2)
 
-    output9 = df2 + check_null_any()
-    expected9 = False
+    output9 = df2 + count_null()
+    expected9 = 0
     assert output9 == expected9
 
-    output10 = df2 + check_null_any(column="col5")
-    expected10 = False
+    output10 = df2 + count_null(column="col5")
+    expected10 = 0
     assert output10 == expected10
 
-    output11 = df2 + check_null_total()
+    output11 = df2 + count_null(index=0)
     expected11 = 0
     assert output11 == expected11
-
-    output12 = df2 + check_null_total(column="col5")
-    expected12 = 0
-    assert output12 == expected12
 
 
 def test_drop_na():
@@ -367,28 +362,37 @@ def test_write_file():
     with pytest.raises(IOError) as context:
         new_df = df + write_file("df.abc")
 
+
 def test_melt():
-    pandas_df = pd.DataFrame({
-        'A': {0: 'a', 1: 'b', 2: 'c'},
-        'B': {0: 1, 1: 3, 2: 5},
-        'C': {0: 2, 1: 4, 2: 6}
-    })
+    pandas_df = pd.DataFrame(
+        {
+            "A": {0: "a", 1: "b", 2: "c"},
+            "B": {0: 1, 1: 3, 2: 5},
+            "C": {0: 2, 1: 4, 2: 6},
+        }
+    )
     df = DplyFrame(pandas_df)
 
-    melted_pandas_df = pd.melt(pandas_df, id_vars=['A'], value_vars=['B'])
-    melted_df = df + melt(id_vars=['A'], value_vars=['B'])
+    melted_pandas_df = pd.melt(pandas_df, id_vars=["A"], value_vars=["B"])
+    melted_df = df + melt(id_vars=["A"], value_vars=["B"])
     pd.testing.assert_frame_equal(melted_pandas_df, melted_df)
 
-    melted_pandas_df = pd.melt(pandas_df, id_vars=['A'], value_vars=['B'],
-                               var_name='myVarname', value_name='myValname')
-    melted_df = df + melt(id_vars=['A'], value_vars=['B'],
-                          var_name='myVarname', value_name='myValname')
+    melted_pandas_df = pd.melt(
+        pandas_df,
+        id_vars=["A"],
+        value_vars=["B"],
+        var_name="myVarname",
+        value_name="myValname",
+    )
+    melted_df = df + melt(
+        id_vars=["A"], value_vars=["B"], var_name="myVarname", value_name="myValname"
+    )
     pd.testing.assert_frame_equal(melted_pandas_df, melted_df)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_drop()
-    test_check_null()
+    test_count_null()
     test_drop_na()
     test_fill_na()
     test_merge()
