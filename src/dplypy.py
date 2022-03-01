@@ -19,9 +19,6 @@ class DplyFrame:
         """
         self.pandas_df = pandas_df
 
-    def __eq__(self, other: pd.DataFrame):
-        return self.pandas_df == other.pandas_df
-
     def __getitem__(self, item):
         return self.pandas_df[item]
 
