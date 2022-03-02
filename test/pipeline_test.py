@@ -165,16 +165,39 @@ def test_pivot_table():
 
     df = DplyFrame(pandas_df)
 
+    # General test
     output = df + pivot_table(values='D',
                               index=['A', 'B'], columns=['C'], aggfunc=np.sum, fill_value=0)
     expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.sum, fill_value=0)
     pd.testing.assert_frame_equal(output, expected)
 
+    # Testing dropna
     output = df + pivot_table(values='D',
                               index=['A', 'B'], columns=['C'], aggfunc=np.sum, dropna=False)
     expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.sum, dropna=False)
     pd.testing.assert_frame_equal(output, expected)
 
+    # Testing aggregation functions
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.average)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.average)
+    pd.testing.assert_frame_equal(output, expected)
+
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.std)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.std)
+    pd.testing.assert_frame_equal(output, expected)
+
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.argmax)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.argmax)
+    pd.testing.assert_frame_equal(output, expected)
+
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.argmin)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.argmin)
+    pd.testing.assert_frame_equal(output, expected)
+    
 
 if __name__ == '__main__':
     test_drop()
