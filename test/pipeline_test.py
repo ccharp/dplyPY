@@ -160,7 +160,8 @@ def test_pivot_table():
                                     "small", "large", "small", "small",
                                     "large"],
                               "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
-                              "E": [2, 4, 5, 5, 6, 6, 8, 9, 9]})
+                              "E": [2, 4, 5, 5, 6, 6, 8, 9, 9],
+                              "F": [np.nan for i in range(9)]})
 
     df = DplyFrame(pandas_df)
 
@@ -169,7 +170,10 @@ def test_pivot_table():
     expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.sum, fill_value=0)
     pd.testing.assert_frame_equal(output, expected)
 
-
+    output = df + pivot_table(values='D',
+                              index=['A', 'B'], columns=['C'], aggfunc=np.sum, dropna=False)
+    expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.sum, dropna=False)
+    pd.testing.assert_frame_equal(output, expected)
 
 
 if __name__ == '__main__':
