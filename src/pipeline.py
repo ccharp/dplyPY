@@ -48,6 +48,53 @@ def drop(labels=None, axis=0, index=None, columns=None):
     )
 
 
+def count_null(column=None, index=None):
+    """
+    Get total number of null values in a dataframe, one or more rows of dataframe, or one or more columns of dataframe
+    Return: a nonnegative integer
+    :param column: one column name or one list of column names of a dataframe
+    :param index: one row name or one list of row names of a dataframe
+    """
+
+    def _count_null(d1, column=None, index=None):
+        if column is not None:
+            return d1.pandas_df[column].isna().sum().sum()
+        elif index is not None:
+            return d1.pandas_df.loc[index].isna().sum().sum()
+        else:
+            return d1.pandas_df.isnull().sum().sum()
+
+    return lambda d1: _count_null(d1, column, index)
+
+
+def drop_na(axis=0, how="any", thresh=None, subset=None):
+    """
+    Remove missing values
+    Return: processed dataframe
+    :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
+    :param how: drop rows/columns with any missing value ("any") or all missing values ("all") with default value "any"
+    :param thresh: drop rows/columns with at least thresh amount of missing values with default None
+    :param subset: drop missing values only in subset of rows/columns, where rows/columns correspond to the other axis, with default None
+    """
+    return lambda d1: d1.pandas_df.dropna(
+        axis=axis, how=how, thresh=thresh, subset=subset
+    )
+
+
+def fill_na(value=None, method=None, axis=0, limit=None):
+    """
+    Fill missing values with value
+    Return: processed dataframe
+    :param value: used for filling missing values, can be scaler, dict, series, or dataframe, must be None when method is not None
+    :param method: use "pad" or "ffill" to propagate last valid observation forward, and use "backfill" or "bfill" to use next valid observation to fill gap
+    :param axis: along 0/"index" or 1/"columns" to fill missing values with default value 0
+    :param limit: must be positive if not None. If method is not None, it is the maximum consecutive missing values to fill; otherwise, it fills at most limit number of missing values along the entire axis
+    """
+    return lambda d1: d1.pandas_df.fillna(
+        value=value, method=method, axis=axis, limit=limit
+    )
+
+
 def merge(
     right: DplyFrame,
     how="inner",
@@ -145,14 +192,22 @@ def side_effect(
     return d2_func
 
 
-def melt(id_vars=None, value_vars=None, var_name=None, value_name='value', ignore_index=True):
+def melt(
+    id_vars=None, value_vars=None, var_name=None, value_name="value", ignore_index=True
+):
     """
     Unpivot a dataframe from wide to long format.
 
     :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
     :param value_vars: Columns to unpivot. Default to be all columns not in id_vars. Tuple, list or ndarray.
-    :param var_name: Name of the variable column. 
+    :param var_name: Name of the variable column.
     :param value_name: Name of the value column.
     :param ignore_index: Original index would be ignored if True; else otherwise.
     """
-    return lambda d1: d1.pandas_df.melt(id_vars=id_vars, value_vars=value_vars, var_name=var_name, value_name=value_name, ignore_index=ignore_index)
+    return lambda d1: d1.pandas_df.melt(
+        id_vars=id_vars,
+        value_vars=value_vars,
+        var_name=var_name,
+        value_name=value_name,
+        ignore_index=ignore_index,
+    )
