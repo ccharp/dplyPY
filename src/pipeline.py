@@ -10,6 +10,7 @@ Functions defined in this module are tightly coupled with the `DplyFrame` class 
 """
 
 from src.dplypy import DplyFrame
+from typing import Callable
 
 
 def query(query_str: str):
@@ -172,6 +173,23 @@ def write_file(file_path, sep=",", index=True):
         return to_pickle
     else:
         raise IOError("The file format is not supported.")
+
+
+def side_effect(
+    side_effect_func: Callable[[DplyFrame], None]
+) -> Callable[[DplyFrame], DplyFrame]:
+    """
+    Allows user to inject aribitrary side effects into the pipeline, e.g. render a plot or do network operation. Note that the input function receives a copy of the data frame i.e. modifications will not be preserved.
+
+    :param side_effect_func: performs the side effect
+    """
+
+    def d2_func(d1: DplyFrame):
+        # The deep copy prevents side_effect_func from modifying the Data Frame in a way that is preserved down the pipeline
+        side_effect_func(d1.deep_copy())
+        return d1
+
+    return d2_func
 
 
 def melt(
