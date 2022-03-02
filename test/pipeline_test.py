@@ -10,6 +10,7 @@ from src.pipeline import (
     drop_na,
     fill_na,
     melt,
+    one_hot,
     side_effect,
     pivot_table
 )
@@ -421,6 +422,118 @@ def test_melt():
     )
     pd.testing.assert_frame_equal(melted_pandas_df, melted_df)
 
+def test_one_hot():
+    pandas_df = pd.DataFrame(
+        {
+            "col1": ["B", "A", "C", "D"],
+            "col2": ["A", "B", "A", np.nan],
+            "col3": [1, 2, 3, 4],
+        }
+    )
+
+    df = DplyFrame(pandas_df)
+
+    output1 = df + one_hot()
+    expected1 = pd.get_dummies(pandas_df)
+    pd.testing.assert_frame_equal(output1, expected1)
+
+    output2 = df + one_hot(prefix="p")
+    expected2 = pd.get_dummies(pandas_df, prefix="p")
+    pd.testing.assert_frame_equal(output2, expected2)
+
+    prefix_lst = ["p", "pp"]
+    output3 = df + one_hot(prefix=prefix_lst)
+    expected3 = pd.get_dummies(pandas_df, prefix=prefix_lst)
+    pd.testing.assert_frame_equal(output3, expected3)
+
+    prefix_dict = {"col1": 1, "col2": 2}
+    output4 = df + one_hot(prefix=prefix_dict)
+    expected4 = pd.get_dummies(pandas_df, prefix=prefix_dict)
+    pd.testing.assert_frame_equal(output4, expected4)
+
+    output5 = df + one_hot(prefix_sep="__")
+    expected5 = pd.get_dummies(pandas_df, prefix_sep="__")
+    pd.testing.assert_frame_equal(output5, expected5)
+
+    output6 = df + one_hot(prefix="p", prefix_sep="__")
+    expected6 = pd.get_dummies(pandas_df, prefix="p", prefix_sep="__")
+    pd.testing.assert_frame_equal(output6, expected6)
+
+    prefix_sep_lst = ["__", "___"]
+    output7 = df + one_hot(prefix="p", prefix_sep=prefix_sep_lst)
+    expected7 = pd.get_dummies(pandas_df, prefix="p", prefix_sep=prefix_sep_lst)
+    pd.testing.assert_frame_equal(output7, expected7)
+
+    prefix_sep_dict = {"col1": "___", "col2": "__"}
+    output8 = df + one_hot(prefix="p", prefix_sep=prefix_sep_dict)
+    expected8 = pd.get_dummies(pandas_df, prefix="p", prefix_sep=prefix_sep_dict)
+    pd.testing.assert_frame_equal(output8, expected8)
+
+    output9 = df + one_hot(columns=["col1"])
+    expected9 = pd.get_dummies(pandas_df, columns=["col1"])
+    pd.testing.assert_frame_equal(output9, expected9)
+
+    output10 = df + one_hot(columns=["col1", "col3"])
+    expected10 = pd.get_dummies(pandas_df, columns=["col1", "col3"])
+    pd.testing.assert_frame_equal(output10, expected10)
+
+    output11 = df + one_hot(drop_first=True)
+    expected11 = pd.get_dummies(pandas_df, drop_first=True)
+    pd.testing.assert_frame_equal(output11, expected11)
+
+    output12 = df + one_hot(dummy_na=True)
+    expected12 = pd.get_dummies(pandas_df, dummy_na=True)
+    pd.testing.assert_frame_equal(output12, expected12)
+
+    output13 = df + one_hot(dtype=int)
+    expected13 = pd.get_dummies(pandas_df, dtype=int)
+    pd.testing.assert_frame_equal(output13, expected13)
+
+    output14 = df + one_hot(dtype=(str, int))
+    expected14 = pd.get_dummies(pandas_df, dtype=(str, int))
+    pd.testing.assert_frame_equal(output14, expected14)
+
+    try:
+        df + one_hot(prefix=1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
+
+    try:
+        df + one_hot(prefix_sep=1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
+
+    try:
+        df + one_hot(columns="col1")
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
+
+    try:
+        df + one_hot(prefix=["p", "pp"], columns=["col1", "col2", "col3"])
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("ValueError was not raised")
+
+    try:
+        df + one_hot(dtype=(int, str))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("ValueError was not raised")
+
+    try:
+        df + one_hot(dtype=[str, int])
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
 
 def test_pivot_table():
     pandas_df = pd.DataFrame({"A": ["foo", "foo", "foo", "foo", "foo",
@@ -469,7 +582,6 @@ def test_pivot_table():
     expected = pandas_df.pivot_table(values='D', index=['A', 'B'], columns=['C'], aggfunc=np.argmin)
     pd.testing.assert_frame_equal(output, expected)
     
-
 if __name__ == "__main__":
     test_drop()
     test_count_null()
@@ -478,3 +590,5 @@ if __name__ == "__main__":
     test_merge()
     test_write_file()
     test_melt()
+    test_one_hot()
+    test_pivot_table()

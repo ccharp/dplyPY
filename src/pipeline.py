@@ -10,6 +10,8 @@ Functions defined in this module are tightly coupled with the `DplyFrame` class 
 """
 
 from src.dplypy import DplyFrame
+import pandas as pd
+import numpy as np
 from typing import Callable
 
 
@@ -52,7 +54,9 @@ def drop(labels=None, axis=0, index=None, columns=None):
 def count_null(column=None, index=None):
     """
     Get total number of null values in a dataframe, one or more rows of dataframe, or one or more columns of dataframe
+
     Return: a nonnegative integer
+
     :param column: one column name or one list of column names of a dataframe
     :param index: one row name or one list of row names of a dataframe
     """
@@ -71,7 +75,9 @@ def count_null(column=None, index=None):
 def drop_na(axis=0, how="any", thresh=None, subset=None):
     """
     Remove missing values
+
     Return: processed dataframe
+
     :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
     :param how: drop rows/columns with any missing value ("any") or all missing values ("all") with default value "any"
     :param thresh: drop rows/columns with at least thresh amount of missing values with default None
@@ -85,7 +91,9 @@ def drop_na(axis=0, how="any", thresh=None, subset=None):
 def fill_na(value=None, method=None, axis=0, limit=None):
     """
     Fill missing values with value
+
     Return: processed dataframe
+
     :param value: used for filling missing values, can be scaler, dict, series, or dataframe, must be None when method is not None
     :param method: use "pad" or "ffill" to propagate last valid observation forward, and use "backfill" or "bfill" to use next valid observation to fill gap
     :param axis: along 0/"index" or 1/"columns" to fill missing values with default value 0
@@ -231,4 +239,33 @@ def melt(
         var_name=var_name,
         value_name=value_name,
         ignore_index=ignore_index,
+    )
+
+
+def one_hot(
+    prefix=None,
+    prefix_sep="_",
+    dummy_na=False,
+    columns=None,
+    drop_first=False,
+    dtype=np.uint8,
+):
+    """
+    Convert categorical variables to indicators
+
+    :param prefix: a single string or a list or dictionary of string with default None to be placed before column names
+    :param prefix_sep: separator between prefix and column name with default "_"
+    :param dummy_na: if adding a column for missing values with default False
+    :param columns: column names being encoded with default None, i.e. considering everything
+    :param drop_first: if removing first indicator column with default False
+    :param dtype: only one type for new columns with default unsigned 8-bit integer
+    """
+    return lambda d1: pd.get_dummies(
+        d1.pandas_df,
+        prefix=prefix,
+        prefix_sep=prefix_sep,
+        dummy_na=dummy_na,
+        columns=columns,
+        drop_first=drop_first,
+        dtype=dtype,
     )
