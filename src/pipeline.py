@@ -10,6 +10,7 @@ Functions defined in this module are tightly coupled with the `DplyFrame` class 
 """
 
 from src.dplypy import DplyFrame
+from typing import Callable
 
 
 def query(query_str: str):
@@ -45,6 +46,53 @@ def drop(labels=None, axis=0, index=None, columns=None):
     return lambda d1: DplyFrame(
         d1.pandas_df.drop(labels=labels, axis=axis,
                           index=index, columns=columns)
+    )
+
+
+def count_null(column=None, index=None):
+    """
+    Get total number of null values in a dataframe, one or more rows of dataframe, or one or more columns of dataframe
+    Return: a nonnegative integer
+    :param column: one column name or one list of column names of a dataframe
+    :param index: one row name or one list of row names of a dataframe
+    """
+
+    def _count_null(d1, column=None, index=None):
+        if column is not None:
+            return d1.pandas_df[column].isna().sum().sum()
+        elif index is not None:
+            return d1.pandas_df.loc[index].isna().sum().sum()
+        else:
+            return d1.pandas_df.isnull().sum().sum()
+
+    return lambda d1: _count_null(d1, column, index)
+
+
+def drop_na(axis=0, how="any", thresh=None, subset=None):
+    """
+    Remove missing values
+    Return: processed dataframe
+    :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
+    :param how: drop rows/columns with any missing value ("any") or all missing values ("all") with default value "any"
+    :param thresh: drop rows/columns with at least thresh amount of missing values with default None
+    :param subset: drop missing values only in subset of rows/columns, where rows/columns correspond to the other axis, with default None
+    """
+    return lambda d1: d1.pandas_df.dropna(
+        axis=axis, how=how, thresh=thresh, subset=subset
+    )
+
+
+def fill_na(value=None, method=None, axis=0, limit=None):
+    """
+    Fill missing values with value
+    Return: processed dataframe
+    :param value: used for filling missing values, can be scaler, dict, series, or dataframe, must be None when method is not None
+    :param method: use "pad" or "ffill" to propagate last valid observation forward, and use "backfill" or "bfill" to use next valid observation to fill gap
+    :param axis: along 0/"index" or 1/"columns" to fill missing values with default value 0
+    :param limit: must be positive if not None. If method is not None, it is the maximum consecutive missing values to fill; otherwise, it fills at most limit number of missing values along the entire axis
+    """
+    return lambda d1: d1.pandas_df.fillna(
+        value=value, method=method, axis=axis, limit=limit
     )
 
 
@@ -89,7 +137,7 @@ def merge(
     )
 
 
-def write_file(file_path, sep=',', index=True):
+def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
 
@@ -99,6 +147,7 @@ def write_file(file_path, sep=',', index=True):
     :param sep: the separator for csv files. Default to be comma
     :param index: Write the row name by the index of the DplyFrame. Default to be true.
     """
+
     def to_csv(d1):
         d1.pandas_df.to_csv(file_path, sep=sep, index=index)
         return d1
@@ -115,13 +164,13 @@ def write_file(file_path, sep=',', index=True):
         d1.pandas_df.to_pickle(file_path)
         return d1
 
-    if file_path.endswith('.csv'):
+    if file_path.endswith(".csv"):
         return to_csv
-    elif file_path.endswith('.xlsx'):
+    elif file_path.endswith(".xlsx"):
         return to_excel
-    elif file_path.endswith('.json'):
+    elif file_path.endswith(".json"):
         return to_json
-    elif file_path.endswith('.pkl'):
+    elif file_path.endswith(".pkl"):
         return to_pickle
     else:
         raise IOError('The file format is not supported.')
@@ -145,3 +194,41 @@ def pivot_table(
     :param whether to drop the columns with all nan values 
     """
     return lambda d1: d1.pandas_df.pivot_table(values=values, index=index, columns=columns, aggfunc=aggfunc, fill_value=fill_value, dropna=dropna)
+
+
+def side_effect(
+    side_effect_func: Callable[[DplyFrame], None]
+) -> Callable[[DplyFrame], DplyFrame]:
+    """
+    Allows user to inject aribitrary side effects into the pipeline, e.g. render a plot or do network operation. Note that the input function receives a copy of the data frame i.e. modifications will not be preserved.
+
+    :param side_effect_func: performs the side effect
+    """
+
+    def d2_func(d1: DplyFrame):
+        # The deep copy prevents side_effect_func from modifying the Data Frame in a way that is preserved down the pipeline
+        side_effect_func(d1.deep_copy())
+        return d1
+
+    return d2_func
+
+
+def melt(
+    id_vars=None, value_vars=None, var_name=None, value_name="value", ignore_index=True
+):
+    """
+    Unpivot a dataframe from wide to long format.
+
+    :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
+    :param value_vars: Columns to unpivot. Default to be all columns not in id_vars. Tuple, list or ndarray.
+    :param var_name: Name of the variable column.
+    :param value_name: Name of the value column.
+    :param ignore_index: Original index would be ignored if True; else otherwise.
+    """
+    return lambda d1: d1.pandas_df.melt(
+        id_vars=id_vars,
+        value_vars=value_vars,
+        var_name=var_name,
+        value_name=value_name,
+        ignore_index=ignore_index,
+    )

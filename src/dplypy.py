@@ -25,6 +25,9 @@ class DplyFrame:
     def __getitem__(self, item):
         return self.pandas_df[item]
 
+    def __setitem__(self, key, value):
+        self.pandas_df[key] = value
+
     def __add__(d1, d2_func):
         """
         Chain two or more pipline operations together.
@@ -40,6 +43,9 @@ class DplyFrame:
         :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function) returned by a pipeline method
         """
         return d2_func(d1)
+
+    def deep_copy(self):
+        return DplyFrame(self.pandas_df.copy(deep=True))
 
     def __repr__(self):
         return self.pandas_df.to_string()
