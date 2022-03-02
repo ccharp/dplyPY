@@ -163,16 +163,26 @@ def test_side_effect(capsys):
             "col1": ["a", "b", "c", "d"],
         }
     )
-    df = DplyFrame(pandas_df)
+    dplyf = DplyFrame(pandas_df.copy(deep=True))
 
-    df_post_pipe = df + side_effect(lambda d1: print(d1["col1"][1]))
-
-    expected_stdout = "b\n"
-
+    # Verify that a side effect occured
+    df_post_pipe = (
+        dplyf
+        + side_effect(lambda df: print(df["col1"][1]))
+        + side_effect(lambda df: print(df["col1"][2]))
+    )
+    expected_stdout = "b\nc\n"
     captured_stdout = capsys.readouterr().out
-
     assert expected_stdout == captured_stdout
-    pd.testing.assert_frame_equal(df.pandas_df, df_post_pipe.pandas_df)
+    # Verify that the data frame was not modified
+    pd.testing.assert_frame_equal(dplyf.pandas_df, df_post_pipe.pandas_df)
+
+    # Verfy that side effects cannot modify the data frame
+    def my_side_effect_func(d1):
+        d1["new_column"] = 0
+
+    df_post_pipe = dplyf + side_effect(my_side_effect_func)
+    pd.testing.assert_frame_equal(dplyf.pandas_df, df_post_pipe.pandas_df)
 
 
 def test_melt():
