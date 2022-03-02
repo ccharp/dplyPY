@@ -46,7 +46,8 @@ def drop(labels=None, axis=0, index=None, columns=None):
     :param columns: the column names of the rows to be dropped. Single or list-like.
     """
     return lambda d1: DplyFrame(
-        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
+        d1.pandas_df.drop(labels=labels, axis=axis,
+                          index=index, columns=columns)
     )
 
 
@@ -180,7 +181,27 @@ def write_file(file_path, sep=",", index=True):
     elif file_path.endswith(".pkl"):
         return to_pickle
     else:
-        raise IOError("The file format is not supported.")
+        raise IOError('The file format is not supported.')
+
+
+def pivot_table(
+    values=None, 
+    index=None, 
+    columns=None, 
+    aggfunc='mean', 
+    fill_value=None, 
+    dropna=True):
+    """
+    Create a spreadsheet style pivot table as a DplyFrame
+
+    :param values: columns to be aggregated
+    :param index: keys to group by on the pivot table index
+    :param columns: keys to group by on the pivot table column
+    :param aggfunc: aggregation functions
+    :param fill_value: the value to replace the nan values in the table after aggregation
+    :param whether to drop the columns with all nan values 
+    """
+    return lambda d1: d1.pandas_df.pivot_table(values=values, index=index, columns=columns, aggfunc=aggfunc, fill_value=fill_value, dropna=dropna)
 
 
 def side_effect(
