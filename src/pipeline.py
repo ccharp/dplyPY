@@ -46,8 +46,7 @@ def drop(labels=None, axis=0, index=None, columns=None):
     :param columns: the column names of the rows to be dropped. Single or list-like.
     """
     return lambda d1: DplyFrame(
-        d1.pandas_df.drop(labels=labels, axis=axis,
-                          index=index, columns=columns)
+        d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
     )
 
 
@@ -83,8 +82,8 @@ def drop_na(axis=0, how="any", thresh=None, subset=None):
     :param thresh: drop rows/columns with at least thresh amount of missing values with default None
     :param subset: drop missing values only in subset of rows/columns, where rows/columns correspond to the other axis, with default None
     """
-    return lambda d1: d1.pandas_df.dropna(
-        axis=axis, how=how, thresh=thresh, subset=subset
+    return lambda d1: DplyFrame(
+        d1.pandas_df.dropna(axis=axis, how=how, thresh=thresh, subset=subset)
     )
 
 
@@ -99,8 +98,8 @@ def fill_na(value=None, method=None, axis=0, limit=None):
     :param axis: along 0/"index" or 1/"columns" to fill missing values with default value 0
     :param limit: must be positive if not None. If method is not None, it is the maximum consecutive missing values to fill; otherwise, it fills at most limit number of missing values along the entire axis
     """
-    return lambda d1: d1.pandas_df.fillna(
-        value=value, method=method, axis=axis, limit=limit
+    return lambda d1: DplyFrame(
+        d1.pandas_df.fillna(value=value, method=method, axis=axis, limit=limit)
     )
 
 
@@ -181,16 +180,12 @@ def write_file(file_path, sep=",", index=True):
     elif file_path.endswith(".pkl"):
         return to_pickle
     else:
-        raise IOError('The file format is not supported.')
+        raise IOError("The file format is not supported.")
 
 
 def pivot_table(
-    values=None, 
-    index=None, 
-    columns=None, 
-    aggfunc='mean', 
-    fill_value=None, 
-    dropna=True):
+    values=None, index=None, columns=None, aggfunc="mean", fill_value=None, dropna=True
+):
     """
     Create a spreadsheet style pivot table as a DplyFrame
 
@@ -199,9 +194,18 @@ def pivot_table(
     :param columns: keys to group by on the pivot table column
     :param aggfunc: aggregation functions
     :param fill_value: the value to replace the nan values in the table after aggregation
-    :param whether to drop the columns with all nan values 
+    :param whether to drop the columns with all nan values
     """
-    return lambda d1: d1.pandas_df.pivot_table(values=values, index=index, columns=columns, aggfunc=aggfunc, fill_value=fill_value, dropna=dropna)
+    return lambda d1: DplyFrame(
+        d1.pandas_df.pivot_table(
+            values=values,
+            index=index,
+            columns=columns,
+            aggfunc=aggfunc,
+            fill_value=fill_value,
+            dropna=dropna,
+        )
+    )
 
 
 def side_effect(
@@ -233,12 +237,14 @@ def melt(
     :param value_name: Name of the value column.
     :param ignore_index: Original index would be ignored if True; else otherwise.
     """
-    return lambda d1: d1.pandas_df.melt(
-        id_vars=id_vars,
-        value_vars=value_vars,
-        var_name=var_name,
-        value_name=value_name,
-        ignore_index=ignore_index,
+    return lambda d1: DplyFrame(
+        d1.pandas_df.melt(
+            id_vars=id_vars,
+            value_vars=value_vars,
+            var_name=var_name,
+            value_name=value_name,
+            ignore_index=ignore_index,
+        )
     )
 
 
@@ -260,12 +266,14 @@ def one_hot(
     :param drop_first: if removing first indicator column with default False
     :param dtype: only one type for new columns with default unsigned 8-bit integer
     """
-    return lambda d1: pd.get_dummies(
-        d1.pandas_df,
-        prefix=prefix,
-        prefix_sep=prefix_sep,
-        dummy_na=dummy_na,
-        columns=columns,
-        drop_first=drop_first,
-        dtype=dtype,
+    return lambda d1: DplyFrame(
+        pd.get_dummies(
+            d1.pandas_df,
+            prefix=prefix,
+            prefix_sep=prefix_sep,
+            dummy_na=dummy_na,
+            columns=columns,
+            drop_first=drop_first,
+            dtype=dtype,
+        )
     )
