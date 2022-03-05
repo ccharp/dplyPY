@@ -1,14 +1,12 @@
 import pandas as pd
-import functools as ft
-import numpy as np
-from typing import AnyStr, Callable
 
 
 class DplyFrame:
     """
     pandas.DataFrame wrapper for implementing DyplyR style data pipelines.
 
-    Here, we simulate dplyr's `%>%` with `+`. See pipeline.py for pipeline-function-specific documentation.
+    Here, we simulate dplyr's `%>%` with `+`.
+    See pipeline.py for pipeline-function-specific documentation.
     """
 
     def __init__(self, pandas_df: pd.DataFrame):
@@ -37,7 +35,8 @@ class DplyFrame:
         ```
 
         :param d1: self--the forst operand of `+`
-        :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function) returned by a pipeline method
+        :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function)
+                  returned by a pipeline method
         """
         return d2_func(d1)
 

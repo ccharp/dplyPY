@@ -1,4 +1,7 @@
+import os
 import pandas as pd
+import numpy as np
+import pytest
 from src.dplypy import DplyFrame
 from src.pipeline import (
     query,
@@ -14,10 +17,6 @@ from src.pipeline import (
     side_effect,
     pivot_table,
 )
-
-import numpy as np
-import os
-import pytest
 
 
 def _test():  # TODO: convert to pytest
@@ -303,16 +302,16 @@ def test_fill_na():
     pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
     # dictionary value
-    d1 = {"col1": 9, "col2": 10, "col3": 11, "col4": 12}
+    d1 = {"col1": "a", "col2": 10, "col3": 11, "col4": 12}
     output9 = df + fill_na(value=d1)
     expected9 = pandas_df.fillna(value=d1)
     pd.testing.assert_frame_equal(output9.pandas_df, expected9)
 
-    d2 = {"col1": "a", "col2": 10, "col3": 11}
+    d2 = {"col1": 9, "col2": 10, "col3": 11, "col4": 12}
     d3 = {"col1": 9, "col2": 10, "col3": 11}
     d4 = {"col4": 12}
     output10 = df + fill_na(value=d3) + fill_na(value=d4)
-    expected10 = pandas_df.fillna(value=d1)
+    expected10 = pandas_df.fillna(value=d2)
     pd.testing.assert_frame_equal(output10.pandas_df, expected10)
 
     # series value
@@ -477,10 +476,14 @@ def test_merge():
     expected9 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="right")
     pd.testing.assert_frame_equal(output9.pandas_df, expected9)
 
-    # cross (new for pandas 1.2.0)
-    output10 = df_l_new + merge(df_r_new, how="cross")
-    expected10 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="cross")
+    output10 = df_l_new + merge(df_r_new, how="outer")
+    expected10 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="outer")
     pd.testing.assert_frame_equal(output10.pandas_df, expected10)
+
+    # cross (new for pandas 1.2.0)
+    output11 = df_l_new + merge(df_r_new, how="cross")
+    expected11 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="cross")
+    pd.testing.assert_frame_equal(output11.pandas_df, expected11)
 
     try:
         df_l_new + merge(df_r_new, on="col1", how="cross")
@@ -558,8 +561,8 @@ def test_write_file():
     os.remove("df_no_index.pkl")
 
     # Error case
-    with pytest.raises(IOError) as context:
-        new_df = df + write_file("df.abc")
+    with pytest.raises(IOError):
+        df + write_file("df.abc")
 
 
 def test_side_effect(capsys):
@@ -1082,7 +1085,6 @@ if __name__ == "__main__":
     test_fill_na()
     test_merge()
     test_write_file()
-    test_side_effect()
     test_melt()
     test_one_hot()
     test_pivot_table()
