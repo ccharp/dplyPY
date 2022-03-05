@@ -49,7 +49,8 @@ disable=
     C0115,
     C0116,
     E0213,
-    W0106
+    W0106,
+    R0801
 
 [MESSAGES CONTROL]
 
