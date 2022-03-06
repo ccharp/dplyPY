@@ -1,8 +1,5 @@
 import pandas as pd
 from src.dplypy import DplyFrame
-import numpy as np
-import os
-import pytest
 
 
 def test_init():
