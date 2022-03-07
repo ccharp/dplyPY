@@ -13,9 +13,11 @@ Hence they return a function to be executed at the correct time by DplyFrame.
 """
 
 from typing import Callable
+
 import pandas as pd
 import numpy as np
-from src.dplypy import DplyFrame
+
+from dplypy.dplypy import DplyFrame
 
 
 def query(query_str: str):

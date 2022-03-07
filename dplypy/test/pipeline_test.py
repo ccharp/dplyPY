@@ -1,9 +1,11 @@
 import os
+
 import pandas as pd
 import numpy as np
 import pytest
-from src.dplypy import DplyFrame
-from src.pipeline import (
+
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import (
     query,
     apply,
     drop,
