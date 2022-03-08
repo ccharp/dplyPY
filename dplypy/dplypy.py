@@ -41,7 +41,10 @@ class DplyFrame:
         return d2_func(d1)
 
     def head(self, n):
-        return self.pandas_df.head(n)
+        return DplyFrame(self.pandas_df.head(n))
+
+    def tail(self, n):
+        return DplyFrame(self.pandas_df.tail(n))
 
     def deep_copy(self):
         return DplyFrame(self.pandas_df.copy(deep=True))
