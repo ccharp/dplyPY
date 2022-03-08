@@ -9,6 +9,5 @@ setup(
         "pandas>=1.4.1>=1.4.1",
         "pytest>=6.2.3",
         "seaborn>=0.11.1",
-        # setuptools==52.0.0.post20210125
     ],
 )
