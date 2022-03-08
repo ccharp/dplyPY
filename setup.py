@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "numpy>=1.22.0",
-        "pandas>=1.4.1>=1.4.1",
+        "pandas>=1.4.1",
         "pytest>=6.2.3",
         "seaborn>=0.11.1",
     ],
