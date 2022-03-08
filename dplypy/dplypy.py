@@ -25,6 +25,27 @@ class DplyFrame:
     def __setitem__(self, key, value):
         self.pandas_df[key] = value
 
+    def __eq__(d1, other):
+        return d1.pandas_df == other
+
+    def __lt__(d1, other):
+        return d1.pandas_df < other
+
+    def __le__(d1, other):
+        return d1.pandas_df <= other
+
+    def __gt__(d1, other):
+        return d1.pandas_df > other
+
+    def __ge__(d1, other):
+        return d1.pandas_df >= other
+
+    def __ne__(d1, other):
+        return not (d1.__eq__(d1, other))
+
+    def __eq__(d1, param):
+        return d1.pandas_df == param
+
     def __add__(d1, d2_func):
         """
         Chain two or more pipline operations together.
@@ -55,7 +76,7 @@ class DplyFrame:
         return self.pandas_df.to_string()
 
 
-def query(query_str: str):
+def select(query_str: str):
     """
     Query the columns of a DplyFrame with a boolean expression.
 
@@ -64,7 +85,7 @@ def query(query_str: str):
     return lambda d1: DplyFrame(d1.pandas_df.query(query_str))
 
 
-def apply(func, axis=0):
+def mutate(func, axis=0):
     """
     Apply a function along an axis of the DplyFrame.
 
@@ -331,4 +352,26 @@ def one_hot(
             drop_first=drop_first,
             dtype=dtype,
         )
+    )
+
+
+def filter(boolean_series):
+    """
+    Cull rows by boolean series. Works similarly to DplyFrame.__get__()
+
+    :param boolean_series: must have the same number of rows as the incoming dataframe. Removes rows corresponding to False values in the series.
+    """
+    return lambda d1: DplyFrame(d1[boolean_series])
+
+
+def arrange(by, axis=0, ascending=True):
+    """
+    Sort the dataframe
+
+    :param by: mapping, function, label, or list of labels
+    :param axis: 0 for index, 1 for columns
+    :param ascending: whether or not the data should be sorted in ascending order (False for descending)
+    """
+    return lambda d1: DplyFrame(
+        d1.pandas_df.sort_values(by=by, axis=axis, ascending=True)
     )
