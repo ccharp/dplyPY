@@ -4,21 +4,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from dplypy.dplypy import DplyFrame
-from dplypy.pipeline import (
-    query,
-    apply,
-    drop,
-    merge,
-    write_file,
-    count_null,
-    drop_na,
-    fill_na,
-    melt,
-    one_hot,
-    side_effect,
-    pivot_table,
-)
+from dplypy.dplypy import *
 
 
 def _test():  # TODO: convert to pytest
