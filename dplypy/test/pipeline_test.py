@@ -4,21 +4,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from dplypy.dplypy import DplyFrame
-from dplypy.pipeline import (
-    query,
-    apply,
-    drop,
-    merge,
-    write_file,
-    count_null,
-    drop_na,
-    fill_na,
-    melt,
-    one_hot,
-    side_effect,
-    pivot_table,
-)
+from dplypy.dplypy import *
 
 
 def _test():  # TODO: convert to pytest
@@ -29,7 +15,7 @@ def _test():  # TODO: convert to pytest
     )
 
     d = DplyFrame(pandas_df)
-    output = d + apply(lambda x: x + 1) + query("col1 == 2")
+    output = d + mutate(lambda x: x + 1) + select("col1 == 2")
     print(output.pandas_df)
 
 
@@ -1080,8 +1066,34 @@ def test_pivot_table():
         raise AssertionError("KeyError was not raised")
 
 
+def test_filter():
+    pdf = pd.DataFrame(
+        {
+            "A": ["foo", "foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
+            "B": ["one", "one", "one", "two", "two", "one", "one", "two", "two"],
+            "C": [
+                "small",
+                "large",
+                "large",
+                "small",
+                "small",
+                "large",
+                "small",
+                "small",
+                "large",
+            ],
+            "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+            "E": [2, 4, 5, 5, 6, 6, 8, 9, 9],
+            "F": [np.nan for i in range(9)],
+        }
+    )
+
+    df = DplyFrame(pdf)
+    res = df + filter(df["B"] == "one")
+    pd.testing.assert_frame_equal(res.pandas_df, pdf[pdf["B"] == "one"])
+
+
 if __name__ == "__main__":
-    test_drop()
     test_count_null()
     test_drop_na()
     test_fill_na()
