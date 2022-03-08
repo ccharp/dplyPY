@@ -9,5 +9,6 @@ setup(
         "pytest>=6.2.3",
         "seaborn>=0.11.1",
         "numpy>=1.22.0",
+        "cython>=0.29.23",
     ],
 )
