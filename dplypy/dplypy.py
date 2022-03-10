@@ -1,6 +1,6 @@
+from typing import Callable
 import pandas as pd
 import numpy as np
-from typing import Callable
 
 
 class DplyFrame:
@@ -42,9 +42,6 @@ class DplyFrame:
 
     def __ne__(d1, other):
         return not (d1.__eq__(d1, other))
-
-    def __eq__(d1, param):
-        return d1.pandas_df == param
 
     def __add__(d1, d2_func):
         """
@@ -359,7 +356,8 @@ def filter(boolean_series):
     """
     Cull rows by boolean series. Works similarly to DplyFrame.__get__()
 
-    :param boolean_series: must have the same number of rows as the incoming dataframe. Removes rows corresponding to False values in the series.
+    :param boolean_series: must have the same number of rows as the incoming dataframe.
+                           Removes rows corresponding to False values in the series.
     """
     return lambda d1: DplyFrame(d1[boolean_series])
 
@@ -370,8 +368,9 @@ def arrange(by, axis=0, ascending=True):
 
     :param by: mapping, function, label, or list of labels
     :param axis: 0 for index, 1 for columns
-    :param ascending: whether or not the data should be sorted in ascending order (False for descending)
+    :param ascending: whether or not the data should be sorted in ascending order
+                      (False for descending)
     """
     return lambda d1: DplyFrame(
-        d1.pandas_df.sort_values(by=by, axis=axis, ascending=True)
+        d1.pandas_df.sort_values(by=by, axis=axis, ascending=ascending)
     )
