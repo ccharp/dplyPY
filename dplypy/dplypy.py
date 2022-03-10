@@ -297,6 +297,15 @@ def side_effect(
     return d2_func
 
 
+def s(
+    side_effect_func: Callable[[DplyFrame], None]
+) -> Callable[[DplyFrame], DplyFrame]:
+    """
+    convenience method fof `side_effect()`. See `side_effect for operational details.
+    """
+    return side_effect(side_effect_func)
+
+
 def melt(
     id_vars=None, value_vars=None, var_name=None, value_name="value", ignore_index=True
 ):

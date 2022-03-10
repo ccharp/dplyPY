@@ -650,7 +650,7 @@ def test_side_effect(capsys):
     # Verify that a side effect occured
     df_post_pipe = (
         dplyf
-        + side_effect(lambda df: print(df["col1"][1]))
+        + s(lambda df: print(df["col1"][1]))
         + side_effect(lambda df: print(df["col1"][2]))
     )
     expected_stdout = "b\nc\n"
@@ -663,7 +663,7 @@ def test_side_effect(capsys):
     def my_side_effect_func(d1):
         d1["new_column"] = 0
 
-    df_post_pipe = dplyf + side_effect(my_side_effect_func)
+    df_post_pipe = dplyf + s(my_side_effect_func)
     pd.testing.assert_frame_equal(dplyf.pandas_df, df_post_pipe.pandas_df)
 
 
