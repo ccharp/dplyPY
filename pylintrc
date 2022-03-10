@@ -50,7 +50,9 @@ disable=
     C0116,
     E0213,
     W0106,
-    R0801
+    R0801,
+    W0401,
+    W0622
 
 [MESSAGES CONTROL]
 

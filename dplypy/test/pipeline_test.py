@@ -7,16 +7,102 @@ import pytest
 from dplypy.dplypy import *
 
 
-def _test():  # TODO: convert to pytest
-    pandas_df = pd.DataFrame(
-        np.array(([1, 2, 3], [1, 5, 6], [6, 7, 8])),
-        index=["mouse", "rabbit", "owl"],
+def test_select():
+    pandas_df1 = pd.DataFrame(
+        np.array(([1, 2, 3], [1, 5, 6], [6, 7, 8])), columns=["col1", "col2", "col3"]
+    )
+    df1 = DplyFrame(pandas_df1)
+
+    output1 = df1 + select("col1 == 1")
+    expected1 = pandas_df1.query("col1 == 1")
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df1 + select("col1 == 2")
+    expected2 = pandas_df1.query("col1 == 2")
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    output3 = df1 + select("col1 > col2")
+    expected3 = pandas_df1.query("col1 > col2")
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+    output4 = df1 + select("col1 < col2")
+    expected4 = pandas_df1.query("col1 < col2")
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df1 + select("col1 >= col2")
+    expected5 = pandas_df1.query("col1 >= col2")
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    output6 = df1 + select("col1 <= col2")
+    expected6 = pandas_df1.query("col1 <= col2")
+    pd.testing.assert_frame_equal(output6.pandas_df, expected6)
+
+    output7 = df1 + select("col1 != col2")
+    expected7 = pandas_df1.query("col1 != col2")
+    pd.testing.assert_frame_equal(output7.pandas_df, expected7)
+
+    output8 = df1 + select("col1 != col3 == 8")
+    expected8 = pandas_df1.query("col1 != col3 == 8")
+    pd.testing.assert_frame_equal(output8.pandas_df, expected8)
+
+    try:
+        df1 + select("col4 == 0")
+    except pd.core.computation.ops.UndefinedVariableError:
+        pass
+    else:
+        raise AssertionError("UndefinedVariableError was not raised")
+
+    pandas_df2 = pd.DataFrame(
+        np.array((["a", 1, 0], [1, 2, np.nan], [6, 7, 8])),
         columns=["col1", "col2", "col3"],
     )
+    df2 = DplyFrame(pandas_df2)
 
-    d = DplyFrame(pandas_df)
-    output = d + mutate(lambda x: x + 1) + select("col1 == 2")
-    print(output.pandas_df)
+    output9 = df2 + select("col1 > col2")
+    expected9 = pandas_df2.query("col1 > col2")
+    pd.testing.assert_frame_equal(output9.pandas_df, expected9)
+
+    output10 = df2 + select("col2 != col3")
+    expected10 = pandas_df2.query("col2 != col3")
+    pd.testing.assert_frame_equal(output10.pandas_df, expected10)
+
+
+def test_mutate():
+    pandas_df1 = pd.DataFrame(np.array([[1, 2, 3], [1, 5, 6], [6, 7, 8]]))
+    df1 = DplyFrame(pandas_df1)
+
+    output1 = df1 + mutate(lambda x: x + 1)
+    expected1 = pandas_df1.apply(lambda x: x + 1)
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df1 + mutate(np.sum)
+    expected2 = pandas_df1.apply(np.sum)
+    pd.testing.assert_series_equal(output2.pandas_df, expected2)
+
+    output3 = df1 + mutate(np.sum, axis=1)
+    expected3 = pandas_df1.apply(np.sum, axis=1)
+    pd.testing.assert_series_equal(output3.pandas_df, expected3)
+
+    try:
+        df1 + mutate(1)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("AssertionError was not raised")
+
+    pandas_df2 = pd.DataFrame(np.array([["a", "b", "c"], [1, 5, np.nan], [6, 7, 8]]))
+    df2 = DplyFrame(pandas_df2)
+
+    output4 = df2 + mutate(np.argmax)
+    expected4 = pandas_df2.apply(np.argmax)
+    pd.testing.assert_series_equal(output4.pandas_df, expected4)
+
+    try:
+        df2 + mutate(lambda x: x + 1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
 
 
 def test_drop():
@@ -41,7 +127,7 @@ def test_drop():
     pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
     try:
-        DplyFrame(pandas_df) + drop(["col1", "col5"], axis=1)
+        df2 + drop(["col1", "col5"], axis=1)
     except KeyError:
         pass
     else:
@@ -63,7 +149,7 @@ def test_drop():
     pd.testing.assert_frame_equal(output5.pandas_df, expected5)
 
     try:
-        DplyFrame(pandas_df) + drop(columns=["col1", "col5"])
+        df5 + drop(columns=["col1", "col5"])
     except KeyError:
         pass
     else:
@@ -81,7 +167,7 @@ def test_drop():
     pd.testing.assert_frame_equal(output7.pandas_df, expected7)
 
     try:
-        DplyFrame(pandas_df) + drop(4)
+        df7 + drop(4)
     except KeyError:
         pass
     else:
@@ -93,7 +179,7 @@ def test_drop():
     pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
     try:
-        DplyFrame(pandas_df) + drop(index=[3, 4])
+        df8 + drop(index=[3, 4])
     except KeyError:
         pass
     else:
@@ -1067,7 +1153,7 @@ def test_pivot_table():
 
 
 def test_filter():
-    pdf = pd.DataFrame(
+    pandas_df = pd.DataFrame(
         {
             "A": ["foo", "foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
             "B": ["one", "one", "one", "two", "two", "one", "one", "two", "two"],
@@ -1088,12 +1174,93 @@ def test_filter():
         }
     )
 
-    df = DplyFrame(pdf)
-    res = df + filter(df["B"] == "one")
-    pd.testing.assert_frame_equal(res.pandas_df, pdf[pdf["B"] == "one"])
+    df = DplyFrame(pandas_df)
+
+    output1 = df + filter(df["B"] == "one")
+    expected1 = pandas_df[pandas_df["B"] == "one"]
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df + filter(df["D"] == 1)
+    expected2 = pandas_df[pandas_df["D"] == 1]
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    output3 = df + filter(df["D"] > 1)
+    expected3 = pandas_df[pandas_df["D"] > 1]
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+    output4 = df + filter(df["D"] < 1)
+    expected4 = pandas_df[pandas_df["D"] < 1]
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df + filter(df["D"] >= 1)
+    expected5 = pandas_df[pandas_df["D"] >= 1]
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    output6 = df + filter(df["D"] <= 1)
+    expected6 = pandas_df[pandas_df["D"] <= 1]
+    pd.testing.assert_frame_equal(output6.pandas_df, expected6)
+
+    output7 = df + filter(df["D"] != 1)
+    expected7 = pandas_df[pandas_df["D"] != 1]
+    pd.testing.assert_frame_equal(output7.pandas_df, expected7)
+
+    output8 = df + filter((df["D"] + df["E"]) != 1)
+    expected8 = pandas_df[(pandas_df["D"] + pandas_df["E"]) != 1]
+    pd.testing.assert_frame_equal(output8.pandas_df, expected8)
+
+    output9 = df + filter((df["D"] - df["F"]) != 1)
+    expected9 = pandas_df[(pandas_df["D"] - pandas_df["F"]) != 1]
+    pd.testing.assert_frame_equal(output9.pandas_df, expected9)
+
+    output10 = df + filter((df["D"] * df["F"]) != 1)
+    expected10 = pandas_df[(pandas_df["D"] * pandas_df["F"]) != 1]
+    pd.testing.assert_frame_equal(output10.pandas_df, expected10)
+
+    output11 = df + filter((df["D"] / df["F"]) != 1)
+    expected11 = pandas_df[(pandas_df["D"] / pandas_df["F"]) != 1]
+    pd.testing.assert_frame_equal(output11.pandas_df, expected11)
+
+    output12 = df + filter((df["D"] // df["E"]) != 1)
+    expected12 = pandas_df[(pandas_df["D"] // pandas_df["E"]) != 1]
+    pd.testing.assert_frame_equal(output12.pandas_df, expected12)
+
+    output13 = df + filter((df["C"] == "small") & (df["E"] > 1))
+    expected13 = pandas_df[(pandas_df["C"] == "small") & (pandas_df["E"] > 1)]
+    pd.testing.assert_frame_equal(output13.pandas_df, expected13)
+
+    output14 = df + filter((df["C"] == "small") | (df["E"] > 1))
+    expected14 = pandas_df[(pandas_df["C"] == "small") | (pandas_df["E"] > 1)]
+    pd.testing.assert_frame_equal(output14.pandas_df, expected14)
+
+    output15 = df + filter(~(df["C"] == "small"))
+    expected15 = pandas_df[~(pandas_df["C"] == "small")]
+    pd.testing.assert_frame_equal(output15.pandas_df, expected15)
+
+    try:
+        df + filter(df["K"] == 0)
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
+
+    try:
+        df + filter((df["C"] == "small") and (df["E"] > 1))
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("ValueError was not raised")
+
+    try:
+        df + filter((df["C"] >> 2) > 1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
 
 
 if __name__ == "__main__":
+    test_select()
+    test_mutate()
     test_count_null()
     test_drop_na()
     test_fill_na()
@@ -1102,3 +1269,4 @@ if __name__ == "__main__":
     test_melt()
     test_one_hot()
     test_pivot_table()
+    test_filter()
