@@ -60,17 +60,25 @@ class DplyFrame:
         """
         return d2_func(d1)
 
-    def head(self, n):
-        return DplyFrame(self.pandas_df.head(n))
-
-    def tail(self, n):
-        return DplyFrame(self.pandas_df.tail(n))
-
     def deep_copy(self):
         return DplyFrame(self.pandas_df.copy(deep=True))
 
     def __repr__(self):
         return self.pandas_df.to_string()
+
+
+def head(n):
+    """
+    Returns the first n rows of the dataframe.
+    """
+    return lambda d1: DplyFrame(d1.pandas_df.head(n))
+
+
+def tail(n):
+    """
+    Returns the last n rows of the dataframe
+    """
+    return lambda d1: DplyFrame(d1.pandas_df.tail(n))
 
 
 def select(query_str: str):
