@@ -7,6 +7,32 @@ import pytest
 from dplypy.dplypy import *
 
 
+def test_head():
+    pandas_df = pd.DataFrame(
+        data={
+            "col1": [0, 1, 2, 3],
+            "col2": [2, 3, 4, 5],
+            "col3": [4, 5, 6, 7],
+            "col4": [6, 7, 8, 9],
+        }
+    )
+    df = DplyFrame(pandas_df)
+    pd.testing.assert_frame_equal((df + head(3)).pandas_df, pandas_df.head(3))
+
+
+def test_tail():
+    pandas_df = pd.DataFrame(
+        data={
+            "col1": [3, 2, 1, 0],
+            "col2": [5, 4, 3, 2],
+            "col3": [7, 6, 5, 4],
+            "col4": [9, 8, 7, 6],
+        }
+    )
+    df = DplyFrame(pandas_df)
+    pd.testing.assert_frame_equal((df + tail(2)).pandas_df, pandas_df.tail(2))
+
+
 def test_select():
     pandas_df1 = pd.DataFrame(
         np.array(([1, 2, 3], [1, 5, 6], [6, 7, 8])), columns=["col1", "col2", "col3"]
