@@ -9,8 +9,8 @@ import os
 def test_pipeline(capsys):
     df = DplyFrame(sns.load_dataset("titanic"))
 
-    test_df_1 = df.head(5)
-    test_df_2 = df.tail(5)
+    test_df_1 = df+head(5)
+    test_df_2 = df+tail(5)
     test_df_3 = DplyFrame(
         test_df_1.pandas_df.loc[:, ["survived", "pclass", "age", "sibsp"]]
     )
