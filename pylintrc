@@ -50,7 +50,11 @@ disable=
     C0116,
     E0213,
     W0106,
-    R0801
+    R0801,
+    W0401,
+    W0622,
+    E1121,
+    C0325,
 
 [MESSAGES CONTROL]
 
@@ -266,6 +270,7 @@ good-names=i,
            df,
            on,
            n,
+           by,
            _
 
 # Good variable names regexes, separated by a comma. If names match any regex,

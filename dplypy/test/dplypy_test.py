@@ -63,3 +63,21 @@ def test_repr():
 
     df = DplyFrame(pandas_df)
     assert pandas_df.to_string() == df.__repr__()
+
+
+def test_comparison_ops():
+    pdf = pd.DataFrame(
+        data={
+            "a": [0, 1, 2, 3],
+        }
+    )
+
+    df = DplyFrame(pdf)
+
+    pd.testing.assert_series_equal(df["a"] > 0, pdf["a"] > 0)
+    pd.testing.assert_series_equal(df["a"] >= 1, pdf["a"] >= 1)
+    pd.testing.assert_series_equal(df["a"] < 3, pdf["a"] < 3)
+    pd.testing.assert_series_equal(df["a"] <= 2, pdf["a"] <= 2)
+
+    pd.testing.assert_series_equal(df["a"] == 2, pdf["a"] == 2)
+    pd.testing.assert_series_equal(df["a"] != 2, pdf["a"] != 2)
