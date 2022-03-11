@@ -70,6 +70,8 @@ class DplyFrame:
 def head(n):
     """
     Returns the first n rows of the dataframe.
+
+    :param n: number of rows to select
     """
     return lambda d1: DplyFrame(d1.pandas_df.head(n))
 
@@ -77,6 +79,8 @@ def head(n):
 def tail(n):
     """
     Returns the last n rows of the dataframe
+
+    :param n: number of rows to select
     """
     return lambda d1: DplyFrame(d1.pandas_df.tail(n))
 
@@ -141,9 +145,7 @@ def count_null(column=None, index=None):
 
 def drop_na(axis=0, how="any", thresh=None, subset=None):
     """
-    Remove missing values
-
-    Return: processed dataframe
+    Remove missing values of a dataframe
 
     :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
     :param how: drop rows/columns with any missing value ("any") or all missing values ("all")
@@ -158,9 +160,7 @@ def drop_na(axis=0, how="any", thresh=None, subset=None):
 
 def fill_na(value=None, method=None, axis=0, limit=None):
     """
-    Fill missing values with value
-
-    Return: processed dataframe
+    Fill missing values in a dataframe with value
 
     :param value: used for filling missing values,
                            can be scaler, dict, series, or dataframe,
@@ -391,3 +391,32 @@ def arrange(by, axis=0, ascending=True):
     return lambda d1: DplyFrame(
         d1.pandas_df.sort_values(by=by, axis=axis, ascending=ascending)
     )
+
+
+def loc(*args):
+    """
+    slice a dataframe access row(s) and column(s) by label
+    not support slice with colon because of syntax error
+
+    Return: a single value, a series, or a dataframe
+
+    :param args: a single label, a list or array of labels,
+                 a boolean array, an alignable boolean series,
+                 an alignable index, a callable function,
+                 or multiple arguments with comma separator
+
+    """
+    return lambda d1: d1.pandas_df.loc[args]
+
+
+def iloc(*args):
+    """
+    Purely integer-location based indexing for selection by position
+    not support slice with colun because of syntax error
+
+    Return: a single value, a series, or a dataframe
+    :param args: an integer, a list or array of integers,
+                 a boolean array, a callable function,
+                 or multiple arguments with comma separator
+    """
+    return lambda d1: d1.pandas_df.iloc[args]

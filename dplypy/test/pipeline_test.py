@@ -17,7 +17,33 @@ def test_head():
         }
     )
     df = DplyFrame(pandas_df)
-    pd.testing.assert_frame_equal((df + head(3)).pandas_df, pandas_df.head(3))
+
+    output1 = df + head(3)
+    expected1 = pandas_df.head(3)
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df + head(0)
+    expected2 = pandas_df.head(0)
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    output3 = df + head(100)
+    expected3 = pandas_df.head(100)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+    output4 = df + head(-1)
+    expected4 = pandas_df.head(-1)
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df + head(-100)
+    expected5 = pandas_df.head(-100)
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    try:
+        df + head(0.1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
 
 
 def test_tail():
@@ -30,7 +56,33 @@ def test_tail():
         }
     )
     df = DplyFrame(pandas_df)
-    pd.testing.assert_frame_equal((df + tail(2)).pandas_df, pandas_df.tail(2))
+
+    output1 = df + tail(2)
+    expected1 = pandas_df.tail(2)
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    output2 = df + tail(0)
+    expected2 = pandas_df.tail(0)
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    output3 = df + tail(10)
+    expected3 = pandas_df.tail(10)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+    output4 = df + tail(-1)
+    expected4 = pandas_df.tail(-1)
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df + tail(-10)
+    expected5 = pandas_df.tail(-10)
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    try:
+        df + tail(0.1)
+    except TypeError:
+        pass
+    else:
+        raise AssertionError("TypeError was not raised")
 
 
 def test_select():
@@ -415,9 +467,9 @@ def test_fill_na():
     pd.testing.assert_frame_equal(output10.pandas_df, expected10)
 
     # series value
-    s = pd.Series({"col1": 9, "col5": 10})
-    output11 = df + fill_na(value=s)
-    expected11 = pandas_df.fillna(value=s)
+    se = pd.Series({"col1": 9, "col5": 10})
+    output11 = df + fill_na(value=se)
+    expected11 = pandas_df.fillna(value=se)
     pd.testing.assert_frame_equal(output11.pandas_df, expected11)
 
     # dataframe value
@@ -1284,7 +1336,186 @@ def test_filter():
         raise AssertionError("TypeError was not raised")
 
 
+def test_arrange():
+    pandas_df = pd.DataFrame(
+        data=[[5, 1, 0], [20, 2, 2], [0, 8, 8], [np.nan, 7, 9], [10, 7, 5], [15, 4, 3]],
+        columns=["col1", "col2", "col3"],
+        index=[1, 3, 5, 7, 9, 11],
+    )
+    df = DplyFrame(pandas_df)
+
+    output1 = df + arrange(by="col1")
+    expected1 = pandas_df.sort_values(by="col1")
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
+
+    try:
+        df + arrange(by=1)
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
+
+    output2 = df + arrange(by=["col1", "col2"], ascending=False)
+    expected2 = pandas_df.sort_values(by=["col1", "col2"], ascending=False)
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
+
+    try:
+        df + arrange(by=["col1", "col4"])
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
+
+    output3 = df + arrange(by=["col1"], ascending=False)
+    expected3 = pandas_df.sort_values(by=["col1"], ascending=False)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
+
+    output4 = df + arrange(by="col1", axis="index")
+    expected4 = pandas_df.sort_values(by="col1", axis="index")
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df + arrange(by=1, axis=1)
+    expected5 = pandas_df.sort_values(by=1, axis=1)
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    output6 = df + arrange(by=[1, 3], axis="columns", ascending=[True, False])
+    expected6 = pandas_df.sort_values(
+        by=[1, 3], axis="columns", ascending=[True, False]
+    )
+    pd.testing.assert_frame_equal(output6.pandas_df, expected6)
+
+
+def test_loc():
+    pandas_df = pd.DataFrame(
+        [[1, 2], [3, 4], [5, 6]], index=["idx1", 7, "idx3"], columns=["col1", "col2"]
+    )
+    df = DplyFrame(pandas_df)
+
+    output1 = df + loc("idx1")
+    expected1 = pandas_df.loc["idx1"]
+    pd.testing.assert_series_equal(output1, expected1)
+
+    output2 = df + loc(7)
+    expected2 = pandas_df.loc[7]
+    pd.testing.assert_series_equal(output2, expected2)
+
+    try:
+        df + loc(6)
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
+
+    output3 = df + loc([7, "idx3"])
+    expected3 = pandas_df.loc[[7, "idx3"]]
+    pd.testing.assert_frame_equal(output3, expected3)
+
+    output4 = df + loc("idx3", "col1")
+    expected4 = 5
+    assert output4 == expected4
+
+    output5 = df + loc([True, False, True])
+    expected5 = pandas_df.loc[[True, False, True]]
+    pd.testing.assert_frame_equal(output5, expected5)
+
+    try:
+        df + loc([True, True])
+    except IndexError:
+        pass
+    else:
+        raise IndexError("IndexError was not raised")
+
+    output6 = df + loc(pd.Series([False, True, False], index=[7, "idx1", "idx3"]))
+    expected6 = pandas_df.loc[
+        pd.Series([False, True, False], index=[7, "idx1", "idx3"])
+    ]
+    pd.testing.assert_frame_equal(output6, expected6)
+
+    try:
+        df + loc(pd.Series([False, True, False], index=[6, "idx1", "idx3"]))
+    except pd.core.indexing.IndexingError:
+        pass
+    else:
+        raise AssertionError("IndexingError was not raised")
+
+    output7 = df + loc(pd.Index(["idx3", 7], name="indices"))
+    expected7 = pandas_df.loc[pd.Index(["idx3", 7], name="indices")]
+    pd.testing.assert_frame_equal(output7, expected7)
+
+    output8 = df + loc(df["col1"] > 3)
+    expected8 = pandas_df.loc[df["col1"] > 3]
+    pd.testing.assert_frame_equal(output8, expected8)
+
+    output9 = df + loc(df["col2"] > 3, ["col1"])
+    expected9 = pandas_df.loc[df["col2"] > 3, ["col1"]]
+    pd.testing.assert_frame_equal(output9, expected9)
+
+    try:
+        df + loc(df["col2"] > 3, [7])
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("KeyError was not raised")
+
+    output10 = df + loc(lambda df: df["col1"] == 3)
+    expected10 = pandas_df.loc[lambda df: df["col1"] == 3]
+    pd.testing.assert_frame_equal(output10, expected10)
+
+
+def test_iloc():
+    pandas_df = pd.DataFrame(
+        index=[4, 6, 2, 1],
+        columns=["a", "b", "c"],
+        data=[[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]],
+    )
+    df = DplyFrame(pandas_df)
+
+    output1 = df + iloc(0)
+    expected1 = pandas_df.iloc[0]
+    pd.testing.assert_series_equal(output1, expected1)
+
+    output2 = df + iloc([0])
+    expected2 = pandas_df.iloc[[0]]
+    pd.testing.assert_frame_equal(output2, expected2)
+
+    try:
+        df + iloc(4)
+    except IndexError:
+        pass
+    else:
+        raise AssertionError("IndexError was not raised")
+
+    output3 = df + iloc([1, 2])
+    expected3 = pandas_df.iloc[[1, 2]]
+    pd.testing.assert_frame_equal(output3, expected3)
+
+    output4 = df + iloc([True, False, False, True])
+    expected4 = pandas_df.iloc[[True, False, False, True]]
+    pd.testing.assert_frame_equal(output4, expected4)
+
+    try:
+        df + iloc([True])
+    except IndexError:
+        pass
+    else:
+        raise AssertionError("IndexError was not raised")
+
+    output5 = df + iloc(lambda x: x.index % 2 == 1)
+    expected5 = pandas_df.iloc[lambda x: x.index % 2 == 1]
+    pd.testing.assert_frame_equal(output5, expected5)
+
+    output6 = df + iloc(1, 2)
+    expected6 = 6
+    assert output6 == expected6
+
+    output7 = df + iloc([0, 1], [1, 2])
+    expected7 = pandas_df.iloc[[0, 1], [1, 2]]
+    pd.testing.assert_frame_equal(output7, expected7)
+
+
 if __name__ == "__main__":
+    test_head()
+    test_tail()
     test_select()
     test_mutate()
     test_count_null()
@@ -1296,3 +1527,6 @@ if __name__ == "__main__":
     test_one_hot()
     test_pivot_table()
     test_filter()
+    test_arrange()
+    test_loc()
+    test_iloc()
