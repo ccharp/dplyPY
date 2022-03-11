@@ -22,7 +22,7 @@ def test_pipeline():
     # melt + pivot_table
     output_1 = (
         test_df_1
-        + melt(id_vars=["who"], value_vars=["fare"])
+        + gather(id_vars=["who"], value_vars=["fare"])
         + pivot_table(index=["who"], values=["value"], aggfunc=min)
     )
     expected_1 = test_df_1.pandas_df.melt(id_vars=["who"], value_vars=["fare"]).pivot_table(index=["who"], values=["value"], aggfunc=min)
