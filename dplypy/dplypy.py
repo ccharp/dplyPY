@@ -177,7 +177,7 @@ def fill_na(value=None, method=None, axis=0, limit=None):
     )
 
 
-def merge(
+def join(
     right: DplyFrame,
     how="inner",
     on=None,
@@ -314,7 +314,7 @@ def s(
     return side_effect(side_effect_func)
 
 
-def melt(
+def gather(
     id_vars=None, value_vars=None, var_name=None, value_name="value", ignore_index=True
 ):
     """
