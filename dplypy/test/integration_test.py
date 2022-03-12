@@ -1,8 +1,8 @@
-from cgi import test
 import os
+
 import seaborn as sns
 import pandas as pd
-import numpy as np
+
 from dplypy.dplypy import *
 
 
@@ -30,7 +30,8 @@ def test_pipeline():
     pd.testing.assert_frame_equal(output_1.pandas_df, expected_1)
 
     # One_hot + write_file
-    output_2 = test_df_1 + one_hot(columns=["embarked"]) + write_file("one_hot.csv")
+    output_2 = test_df_1 + \
+        one_hot(columns=["embarked"]) + write_file("one_hot.csv")
     expected_2 = pd.get_dummies(test_df_1.pandas_df, columns=["embarked"])
     pd.testing.assert_frame_equal(output_2.pandas_df, expected_2)
     assert os.path.exists("one_hot.csv")
@@ -52,7 +53,8 @@ def test_pipeline():
     pd.testing.assert_frame_equal(output_4.pandas_df, expected_4)
 
     # merge + drop_na
-    output_5 = test_df_3 + merge(test_df_4, on="pclass", how="outer") + drop_na()
+    output_5 = test_df_3 + \
+        merge(test_df_4, on="pclass", how="outer") + drop_na()
     expected_5 = test_df_3.pandas_df.merge(
         test_df_4.pandas_df, on="pclass", how="outer"
     ).dropna()
@@ -66,7 +68,8 @@ def test_pipeline():
         + drop(columns="sibsp_y")
     )
     expected_6 = (
-        test_df_3.pandas_df.merge(test_df_4.pandas_df, on="pclass", how="inner")
+        test_df_3.pandas_df.merge(
+            test_df_4.pandas_df, on="pclass", how="inner")
         .fillna(value=0)
         .drop(columns="sibsp_y")
     )
