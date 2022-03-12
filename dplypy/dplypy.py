@@ -393,30 +393,23 @@ def arrange(by, axis=0, ascending=True):
     )
 
 
-def loc(*args):
+def row_name_subset(arg):
     """
-    slice a dataframe access row(s) and column(s) by label
-    not support slice with colon because of syntax error
+    slice a dataframe access rows by index names
 
-    Return: a single value, a series, or a dataframe
-
-    :param args: a single label, a list or array of labels,
-                 a boolean array, an alignable boolean series,
-                 an alignable index, a callable function,
-                 or multiple arguments with comma separator
+    :param args: a list or array of row names,
+                 an alignable boolean series,
+                 or an alignable index
 
     """
-    return lambda d1: d1.pandas_df.loc[args]
+    return lambda d1: DplyFrame(d1.pandas_df.loc[arg])
 
 
-def iloc(*args):
+def slice(arg):
     """
     Purely integer-location based indexing for selection by position
-    not support slice with colun because of syntax error
 
-    Return: a single value, a series, or a dataframe
-    :param args: an integer, a list or array of integers,
-                 a boolean array, a callable function,
-                 or multiple arguments with comma separator
+    :param args: a list or array of integers,
+                 a boolean array, or a callable function
     """
-    return lambda d1: d1.pandas_df.iloc[args]
+    return lambda d1: DplyFrame(d1.pandas_df.iloc[arg])

@@ -1385,84 +1385,52 @@ def test_arrange():
     pd.testing.assert_frame_equal(output6.pandas_df, expected6)
 
 
-def test_loc():
+def test_row_name_subset():
     pandas_df = pd.DataFrame(
         [[1, 2], [3, 4], [5, 6]], index=["idx1", 7, "idx3"], columns=["col1", "col2"]
     )
     df = DplyFrame(pandas_df)
 
-    output1 = df + loc("idx1")
-    expected1 = pandas_df.loc["idx1"]
-    pd.testing.assert_series_equal(output1, expected1)
+    output1 = df + row_name_subset(["idx1"])
+    expected1 = pandas_df.loc[["idx1"]]
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
 
-    output2 = df + loc(7)
-    expected2 = pandas_df.loc[7]
-    pd.testing.assert_series_equal(output2, expected2)
+    output2 = df + row_name_subset([7])
+    expected2 = pandas_df.loc[[7]]
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
     try:
-        df + loc(6)
+        df + row_name_subset([6])
     except KeyError:
         pass
     else:
         raise AssertionError("KeyError was not raised")
 
-    output3 = df + loc([7, "idx3"])
+    output3 = df + row_name_subset([7, "idx3"])
     expected3 = pandas_df.loc[[7, "idx3"]]
-    pd.testing.assert_frame_equal(output3, expected3)
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
-    output4 = df + loc("idx3", "col1")
-    expected4 = 5
-    assert output4 == expected4
-
-    output5 = df + loc([True, False, True])
-    expected5 = pandas_df.loc[[True, False, True]]
-    pd.testing.assert_frame_equal(output5, expected5)
-
-    try:
-        df + loc([True, True])
-    except IndexError:
-        pass
-    else:
-        raise IndexError("IndexError was not raised")
-
-    output6 = df + loc(pd.Series([False, True, False], index=[7, "idx1", "idx3"]))
-    expected6 = pandas_df.loc[
+    output4 = df + row_name_subset(
+        pd.Series([False, True, False], index=[7, "idx1", "idx3"])
+    )
+    expected4 = pandas_df.loc[
         pd.Series([False, True, False], index=[7, "idx1", "idx3"])
     ]
-    pd.testing.assert_frame_equal(output6, expected6)
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
     try:
-        df + loc(pd.Series([False, True, False], index=[6, "idx1", "idx3"]))
+        df + row_name_subset(pd.Series([False, True, False], index=[6, "idx1", "idx3"]))
     except pd.core.indexing.IndexingError:
         pass
     else:
         raise AssertionError("IndexingError was not raised")
 
-    output7 = df + loc(pd.Index(["idx3", 7], name="indices"))
-    expected7 = pandas_df.loc[pd.Index(["idx3", 7], name="indices")]
-    pd.testing.assert_frame_equal(output7, expected7)
-
-    output8 = df + loc(df["col1"] > 3)
-    expected8 = pandas_df.loc[df["col1"] > 3]
-    pd.testing.assert_frame_equal(output8, expected8)
-
-    output9 = df + loc(df["col2"] > 3, ["col1"])
-    expected9 = pandas_df.loc[df["col2"] > 3, ["col1"]]
-    pd.testing.assert_frame_equal(output9, expected9)
-
-    try:
-        df + loc(df["col2"] > 3, [7])
-    except KeyError:
-        pass
-    else:
-        raise AssertionError("KeyError was not raised")
-
-    output10 = df + loc(lambda df: df["col1"] == 3)
-    expected10 = pandas_df.loc[lambda df: df["col1"] == 3]
-    pd.testing.assert_frame_equal(output10, expected10)
+    output5 = df + row_name_subset(pd.Index(["idx3", 7], name="indices"))
+    expected5 = pandas_df.loc[pd.Index(["idx3", 7], name="indices")]
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
 
 
-def test_iloc():
+def test_slice():
     pandas_df = pd.DataFrame(
         index=[4, 6, 2, 1],
         columns=["a", "b", "c"],
@@ -1470,47 +1438,39 @@ def test_iloc():
     )
     df = DplyFrame(pandas_df)
 
-    output1 = df + iloc(0)
-    expected1 = pandas_df.iloc[0]
-    pd.testing.assert_series_equal(output1, expected1)
-
-    output2 = df + iloc([0])
-    expected2 = pandas_df.iloc[[0]]
-    pd.testing.assert_frame_equal(output2, expected2)
+    output1 = df + slice([0])
+    expected1 = pandas_df.iloc[[0]]
+    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
 
     try:
-        df + iloc(4)
+        df + slice([4])
     except IndexError:
         pass
     else:
         raise AssertionError("IndexError was not raised")
 
-    output3 = df + iloc([1, 2])
-    expected3 = pandas_df.iloc[[1, 2]]
-    pd.testing.assert_frame_equal(output3, expected3)
+    output2 = df + slice([1, 2])
+    expected2 = pandas_df.iloc[[1, 2]]
+    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
-    output4 = df + iloc([True, False, False, True])
-    expected4 = pandas_df.iloc[[True, False, False, True]]
-    pd.testing.assert_frame_equal(output4, expected4)
+    output3 = df + slice([True, False, False, True])
+    expected3 = pandas_df.iloc[[True, False, False, True]]
+    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
     try:
-        df + iloc([True])
+        df + slice([True])
     except IndexError:
         pass
     else:
         raise AssertionError("IndexError was not raised")
 
-    output5 = df + iloc(lambda x: x.index % 2 == 1)
+    output4 = df + slice(np.arange(1, 4))
+    expected4 = pandas_df.iloc[1:4]
+    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
+
+    output5 = df + slice(lambda x: x.index % 2 == 1)
     expected5 = pandas_df.iloc[lambda x: x.index % 2 == 1]
-    pd.testing.assert_frame_equal(output5, expected5)
-
-    output6 = df + iloc(1, 2)
-    expected6 = 6
-    assert output6 == expected6
-
-    output7 = df + iloc([0, 1], [1, 2])
-    expected7 = pandas_df.iloc[[0, 1], [1, 2]]
-    pd.testing.assert_frame_equal(output7, expected7)
+    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
 
 
 if __name__ == "__main__":
@@ -1528,5 +1488,5 @@ if __name__ == "__main__":
     test_pivot_table()
     test_filter()
     test_arrange()
-    test_loc()
-    test_iloc()
+    test_row_name_subset()
+    test_slice()
