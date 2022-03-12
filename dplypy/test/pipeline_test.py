@@ -17,33 +17,7 @@ def test_head():
         }
     )
     df = DplyFrame(pandas_df)
-
-    output1 = df + head(3)
-    expected1 = pandas_df.head(3)
-    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
-
-    output2 = df + head(0)
-    expected2 = pandas_df.head(0)
-    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
-
-    output3 = df + head(100)
-    expected3 = pandas_df.head(100)
-    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
-
-    output4 = df + head(-1)
-    expected4 = pandas_df.head(-1)
-    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
-
-    output5 = df + head(-100)
-    expected5 = pandas_df.head(-100)
-    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
-
-    try:
-        df + head(0.1)
-    except TypeError:
-        pass
-    else:
-        raise AssertionError("TypeError was not raised")
+    pd.testing.assert_frame_equal((df + head(3)).pandas_df, pandas_df.head(3))
 
 
 def test_tail():
@@ -56,33 +30,7 @@ def test_tail():
         }
     )
     df = DplyFrame(pandas_df)
-
-    output1 = df + tail(2)
-    expected1 = pandas_df.tail(2)
-    pd.testing.assert_frame_equal(output1.pandas_df, expected1)
-
-    output2 = df + tail(0)
-    expected2 = pandas_df.tail(0)
-    pd.testing.assert_frame_equal(output2.pandas_df, expected2)
-
-    output3 = df + tail(10)
-    expected3 = pandas_df.tail(10)
-    pd.testing.assert_frame_equal(output3.pandas_df, expected3)
-
-    output4 = df + tail(-1)
-    expected4 = pandas_df.tail(-1)
-    pd.testing.assert_frame_equal(output4.pandas_df, expected4)
-
-    output5 = df + tail(-10)
-    expected5 = pandas_df.tail(-10)
-    pd.testing.assert_frame_equal(output5.pandas_df, expected5)
-
-    try:
-        df + tail(0.1)
-    except TypeError:
-        pass
-    else:
-        raise AssertionError("TypeError was not raised")
+    pd.testing.assert_frame_equal((df + tail(2)).pandas_df, pandas_df.tail(2))
 
 
 def test_select():
@@ -467,9 +415,9 @@ def test_fill_na():
     pd.testing.assert_frame_equal(output10.pandas_df, expected10)
 
     # series value
-    se = pd.Series({"col1": 9, "col5": 10})
-    output11 = df + fill_na(value=se)
-    expected11 = pandas_df.fillna(value=se)
+    series = pd.Series({"col1": 9, "col5": 10})
+    output11 = df + fill_na(value=series)
+    expected11 = pandas_df.fillna(value=series)
     pd.testing.assert_frame_equal(output11.pandas_df, expected11)
 
     # dataframe value
@@ -500,7 +448,7 @@ def test_fill_na():
         raise AssertionError("ValueError was not raised")
 
 
-def test_merge():
+def test_join():
     df_l = DplyFrame(
         pd.DataFrame(
             data={
@@ -525,17 +473,17 @@ def test_merge():
     )
 
     # on
-    output1 = df_l + merge(df_r, on="common")
+    output1 = df_l + join(df_r, on="common")
     expected1 = df_l.pandas_df.merge(df_r.pandas_df, on="common")
     pd.testing.assert_frame_equal(output1.pandas_df, expected1)
 
     # sort
-    output2 = df_l + merge(df_r, on="common", sort=True)
+    output2 = df_l + join(df_r, on="common", sort=True)
     expected2 = df_l.pandas_df.merge(df_r.pandas_df, on="common", sort=True)
     pd.testing.assert_frame_equal(output2.pandas_df, expected2)
 
     # left_on, right_on, suffixes
-    output3 = df_l + merge(
+    output3 = df_l + join(
         df_r, left_on="left_key", right_on="right_key", suffixes=("_foo_x", "_foo_y")
     )
     expected3 = df_l.pandas_df.merge(
@@ -547,21 +495,21 @@ def test_merge():
     pd.testing.assert_frame_equal(output3.pandas_df, expected3)
 
     try:
-        df_l + merge(df_r, left_on="left_key")
+        df_l + join(df_r, left_on="left_key")
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
     try:
-        df_l + merge(df_r, right_on="right_key")
+        df_l + join(df_r, right_on="right_key")
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
     try:
-        df_l + merge(
+        df_l + join(
             df_r, left_on="left_key", right_on="right_key", suffixes=(None, None)
         )
     except ValueError:
@@ -570,35 +518,35 @@ def test_merge():
         raise AssertionError("ValueError was not raised")
 
     # left_index, right_index
-    output4 = df_l + merge(df_r, left_index=True, right_index=True)
+    output4 = df_l + join(df_r, left_index=True, right_index=True)
     expected4 = df_l.pandas_df.merge(df_r.pandas_df, left_index=True, right_index=True)
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
-    output5 = df_l + merge(df_r, left_on="left_key", right_index=True)
+    output5 = df_l + join(df_r, left_on="left_key", right_index=True)
     expected5 = df_l.pandas_df.merge(
         df_r.pandas_df, left_on="left_key", right_index=True
     )
     pd.testing.assert_frame_equal(output5.pandas_df, expected5)
 
-    output6 = df_l + merge(df_r, left_index=True, right_on="right_key")
+    output6 = df_l + join(df_r, left_index=True, right_on="right_key")
     expected6 = df_l.pandas_df.merge(
         df_r.pandas_df, left_index=True, right_on="right_key"
     )
     pd.testing.assert_frame_equal(output6.pandas_df, expected6)
 
     try:
-        df_l + merge(df_r, left_index=True)
+        df_l + join(df_r, left_index=True)
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
     try:
-        df_l + merge(df_r, right_index=True)
+        df_l + join(df_r, right_index=True)
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
     df_l_new = DplyFrame(
         pd.DataFrame(
@@ -616,47 +564,47 @@ def test_merge():
     )
 
     # how
-    output7 = df_l_new + merge(df_r_new, how="left")
+    output7 = df_l_new + join(df_r_new, how="left")
     expected7 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="left")
     pd.testing.assert_frame_equal(output7.pandas_df, expected7)
 
-    output8 = df_l_new + merge(df_r_new, on="col1", how="left")
+    output8 = df_l_new + join(df_r_new, on="col1", how="left")
     expected8 = df_l_new.pandas_df.merge(df_r_new.pandas_df, on="col1", how="left")
     pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
-    output9 = df_l_new + merge(df_r_new, how="right")
+    output9 = df_l_new + join(df_r_new, how="right")
     expected9 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="right")
     pd.testing.assert_frame_equal(output9.pandas_df, expected9)
 
-    output10 = df_l_new + merge(df_r_new, how="outer")
+    output10 = df_l_new + join(df_r_new, how="outer")
     expected10 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="outer")
     pd.testing.assert_frame_equal(output10.pandas_df, expected10)
 
     # cross (new for pandas 1.2.0)
-    output11 = df_l_new + merge(df_r_new, how="cross")
+    output11 = df_l_new + join(df_r_new, how="cross")
     expected11 = df_l_new.pandas_df.merge(df_r_new.pandas_df, how="cross")
     pd.testing.assert_frame_equal(output11.pandas_df, expected11)
 
     try:
-        df_l_new + merge(df_r_new, on="col1", how="cross")
+        df_l_new + join(df_r_new, on="col1", how="cross")
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
     try:
-        df_l_new + merge(df_r_new, left_on="col2", right_on="col4", how="cross")
+        df_l_new + join(df_r_new, left_on="col2", right_on="col4", how="cross")
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("JoinError was not raised")
 
     try:
-        df_l_new + merge(df_r_new, left_index=True, right_index=True, how="cross")
+        df_l_new + join(df_r_new, left_index=True, right_index=True, how="cross")
     except pd.errors.MergeError:
         pass
     else:
-        raise AssertionError("MergeError was not raised")
+        raise AssertionError("joinError was not raised")
 
 
 def test_write_file():
@@ -745,7 +693,7 @@ def test_side_effect(capsys):
     pd.testing.assert_frame_equal(dplyf.pandas_df, df_post_pipe.pandas_df)
 
 
-def test_melt():
+def test_gather():
     pandas_df = pd.DataFrame(
         {
             "A": {0: "a", 1: "b", 2: "c"},
@@ -757,23 +705,23 @@ def test_melt():
 
     # id_vars
     melted_pandas_df_1 = pd.melt(pandas_df, id_vars="A")
-    melted_df_1 = df + melt(id_vars="A")
+    melted_df_1 = df + gather(id_vars="A")
     pd.testing.assert_frame_equal(melted_pandas_df_1, melted_df_1.pandas_df)
 
     melted_pandas_df_2 = pd.melt(pandas_df, id_vars=["A", "B"])
-    melted_df_2 = df + melt(id_vars=["A", "B"])
+    melted_df_2 = df + gather(id_vars=["A", "B"])
     pd.testing.assert_frame_equal(melted_pandas_df_2, melted_df_2.pandas_df)
 
     melted_pandas_df_3 = pd.melt(pandas_df, id_vars=np.array(["A", "B"]))
-    melted_df_3 = df + melt(id_vars=np.array(["A", "B"]))
+    melted_df_3 = df + gather(id_vars=np.array(["A", "B"]))
     pd.testing.assert_frame_equal(melted_pandas_df_3, melted_df_3.pandas_df)
 
     melted_pandas_df_4 = pd.melt(pandas_df, id_vars=("A", "B"))
-    melted_df_4 = df + melt(id_vars=("A", "B"))
+    melted_df_4 = df + gather(id_vars=("A", "B"))
     pd.testing.assert_frame_equal(melted_pandas_df_4, melted_df_4.pandas_df)
 
     try:
-        df + melt(id_vars=["A", "K"])
+        df + gather(id_vars=["A", "K"])
     except KeyError:
         pass
     else:
@@ -781,58 +729,62 @@ def test_melt():
 
     # value_vars
     melted_pandas_df_5 = pd.melt(pandas_df, value_vars="B")
-    melted_df_5 = df + melt(value_vars="B")
+    melted_df_5 = df + gather(value_vars="B")
     pd.testing.assert_frame_equal(melted_pandas_df_5, melted_df_5.pandas_df)
 
     # This is not advisable but should work by choosing last variable
     melted_pandas_df_6 = pd.melt(pandas_df, value_vars="K")
-    melted_df_6 = df + melt(value_vars="K")
+    melted_df_6 = df + gather(value_vars="K")
     pd.testing.assert_frame_equal(melted_pandas_df_6, melted_df_6.pandas_df)
 
     # In contrast, this raises an error
     try:
-        df + melt(value_vars=["K"])
+        df + gather(value_vars=["K"])
     except KeyError:
         pass
     else:
         raise KeyError("KeyError was not raised")
 
     melted_pandas_df_7 = pd.melt(pandas_df, value_vars=["A", "B"])
-    melted_df_7 = df + melt(value_vars=["A", "B"])
+    melted_df_7 = df + gather(value_vars=["A", "B"])
     pd.testing.assert_frame_equal(melted_pandas_df_7, melted_df_7.pandas_df)
 
     melted_pandas_df_8 = pd.melt(pandas_df, value_vars=("A", "B"))
-    melted_df_8 = df + melt(value_vars=("A", "B"))
+    melted_df_8 = df + gather(value_vars=("A", "B"))
     pd.testing.assert_frame_equal(melted_pandas_df_8, melted_df_8.pandas_df)
 
     melted_pandas_df_9 = pd.melt(pandas_df, value_vars=np.array(["A", "B"]))
-    melted_df_9 = df + melt(value_vars=np.array(["A", "B"]))
+    melted_df_9 = df + gather(value_vars=np.array(["A", "B"]))
     pd.testing.assert_frame_equal(melted_pandas_df_9, melted_df_9.pandas_df)
 
     melted_pandas_df_10 = pd.melt(pandas_df, id_vars=["A"], value_vars=["B"])
-    melted_df_10 = df + melt(id_vars=["A"], value_vars=["B"])
+    melted_df_10 = df + gather(id_vars=["A"], value_vars=["B"])
     pd.testing.assert_frame_equal(melted_pandas_df_10, melted_df_10.pandas_df)
 
     # Again, not advisable but should work
     melted_pandas_df_11 = pd.melt(pandas_df, id_vars=["A"], value_vars="D")
-    melted_df_11 = df + melt(id_vars=["A"], value_vars="D")
+    melted_df_11 = df + gather(id_vars=["A"], value_vars="D")
     pd.testing.assert_frame_equal(melted_pandas_df_11, melted_df_11.pandas_df)
 
     # var_name
     melted_pandas_df_12 = pd.melt(
         pandas_df, id_vars=["A"], value_vars=["B", "C"], var_name="myVarname"
     )
-    melted_df_12 = df + melt(id_vars=["A"], value_vars=["B", "C"], var_name="myVarname")
+    melted_df_12 = df + gather(
+        id_vars=["A"], value_vars=["B", "C"], var_name="myVarname"
+    )
     pd.testing.assert_frame_equal(melted_pandas_df_12, melted_df_12.pandas_df)
 
     melted_pandas_df_13 = pd.melt(
         pandas_df, id_vars=["A"], value_vars=["B"], var_name=["myVarname"]
     )
-    melted_df_13 = df + melt(id_vars=["A"], value_vars=["B"], var_name=["myVarname"])
+    melted_df_13 = df + gather(id_vars=["A"], value_vars=["B"], var_name=["myVarname"])
     pd.testing.assert_frame_equal(melted_pandas_df_13, melted_df_13.pandas_df)
 
     try:
-        df + melt(id_vars=["A"], value_vars=["B"], var_name=["myValname", "myValname"])
+        df + gather(
+            id_vars=["A"], value_vars=["B"], var_name=["myValname", "myValname"]
+        )
     except IndexError:
         pass
     else:
@@ -842,7 +794,7 @@ def test_melt():
     melted_pandas_df_13 = pd.melt(
         pandas_df, id_vars=["A"], value_vars=["B", "C"], value_name="myValname"
     )
-    melted_df_13 = df + melt(
+    melted_df_13 = df + gather(
         id_vars=["A"], value_vars=["B", "C"], value_name="myValname"
     )
     pd.testing.assert_frame_equal(melted_pandas_df_13, melted_df_13.pandas_df)
@@ -854,13 +806,13 @@ def test_melt():
         var_name="myVarname",
         value_name="myValname",
     )
-    melted_df_14 = df + melt(
+    melted_df_14 = df + gather(
         id_vars=["A"], value_vars=["B"], var_name="myVarname", value_name="myValname"
     )
     pd.testing.assert_frame_equal(melted_pandas_df_14, melted_df_14.pandas_df)
 
     try:
-        df + melt(id_vars=["A"], value_vars=["B"], value_name=["myValname"])
+        df + gather(id_vars=["A"], value_vars=["B"], value_name=["myValname"])
     except TypeError:
         pass
     else:
@@ -875,7 +827,7 @@ def test_melt():
         value_name=1234,
         ignore_index=False,
     )
-    melted_df_15 = df + melt(
+    melted_df_15 = df + gather(
         id_vars=["A"],
         value_vars=["B"],
         var_name="myVarname",
@@ -1481,9 +1433,9 @@ if __name__ == "__main__":
     test_count_null()
     test_drop_na()
     test_fill_na()
-    test_merge()
+    test_join()
     test_write_file()
-    test_melt()
+    test_gather()
     test_one_hot()
     test_pivot_table()
     test_filter()
