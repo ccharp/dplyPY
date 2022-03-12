@@ -33,6 +33,7 @@ def test_pipeline():
     output_2 = test_df_1 + one_hot(columns=["embarked"]) + write_file("one_hot.csv")
     expected_2 = pd.get_dummies(test_df_1.pandas_df, columns=["embarked"])
     pd.testing.assert_frame_equal(output_2.pandas_df, expected_2)
+
     assert os.path.exists("one_hot.csv")
     os.remove("one_hot.csv")
 
@@ -102,7 +103,7 @@ def test_pipeline():
 
     assert os.path.exists("drop.csv")
     os.remove("drop.csv")
-
+    
     # Others
     print(test_df_1)
     output_9 = test_df_1 + select("survived + pclass != 4")
