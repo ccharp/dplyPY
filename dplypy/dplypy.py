@@ -370,3 +370,35 @@ def arrange(by, axis=0, ascending=True):
     return lambda d1: DplyFrame(
         d1.pandas_df.sort_values(by=by, axis=axis, ascending=ascending)
     )
+
+
+def row_name_subset(arg):
+    """
+    slice a dataframe access rows by index names
+
+    :param args: a list or array of row names,
+                 an alignable boolean series,
+                 or an alignable index
+
+    """
+    return lambda d1: DplyFrame(d1.pandas_df.loc[arg])
+
+
+def slice_row(arg):
+    """
+    Purely integer-location based indexing for row selection by position
+
+    :param arg: a list or array of integers,
+                 a boolean array, or a callable function
+    """
+    return lambda d1: DplyFrame(d1.pandas_df.iloc[arg])
+
+
+def slice_column(arg):
+    """
+    Purely integer-location based indexing for column selection by position
+
+    :param arg: a list or array of integers,
+                 a boolean array, or a callable function
+    """
+    return lambda d1: DplyFrame(d1.pandas_df.iloc[:, arg])
