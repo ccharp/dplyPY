@@ -35,6 +35,22 @@ def test_getitem():
     )
 
 
+def test_setitem_deepcopy():
+    pandas_df = pd.DataFrame([[0, 1]])
+    df1 = DplyFrame(pandas_df)
+    df2 = df1.deep_copy()
+    pd.testing.assert_frame_equal(df1.pandas_df, df2.pandas_df)
+    df1.__setitem__(1, 2)
+    try:
+        pd.testing.assert_frame_equal(df1.pandas_df, df2.pandas_df)
+    except AssertionError:
+        pass
+    else:
+        raise AssertionError("Dataframes should be unequal")
+    df2.pandas_df[1] = 2
+    pd.testing.assert_frame_equal(df1.pandas_df, df2.pandas_df)
+
+
 def test_add():
     pandas_df = pd.DataFrame(
         data={

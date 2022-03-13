@@ -1,9 +1,9 @@
+import os
 from cgi import test
-from dplypy.dplypy import *
 import seaborn as sns
 import pandas as pd
 import numpy as np
-import os
+from dplypy.dplypy import *
 
 
 def test_pipeline():
@@ -11,7 +11,6 @@ def test_pipeline():
 
     test_df_1 = df + head(5)
     test_df_2 = df + tail(5)
-
     test_df_3 = DplyFrame(
         test_df_1.pandas_df.loc[:, ["survived", "pclass", "age", "sibsp"]]
     )
@@ -25,17 +24,18 @@ def test_pipeline():
         + gather(id_vars=["who"], value_vars=["fare"])
         + pivot_table(index=["who"], values=["value"], aggfunc=min)
     )
-    expected_1 = test_df_1.pandas_df.melt(id_vars=["who"], value_vars=["fare"]).pivot_table(index=["who"], values=["value"], aggfunc=min)
+    expected_1 = test_df_1.pandas_df.melt(
+        id_vars=["who"], value_vars=["fare"]
+    ).pivot_table(index=["who"], values=["value"], aggfunc=min)
     pd.testing.assert_frame_equal(output_1.pandas_df, expected_1)
 
-    
     # One_hot + write_file
     output_2 = test_df_1 + one_hot(columns=["embarked"]) + write_file("one_hot.csv")
     expected_2 = pd.get_dummies(test_df_1.pandas_df, columns=["embarked"])
     pd.testing.assert_frame_equal(output_2.pandas_df, expected_2)
 
-    assert os.path.exists('one_hot.csv') == True
-    os.remove('one_hot.csv')
+    assert os.path.exists("one_hot.csv")
+    os.remove("one_hot.csv")
 
     # drop + fill_na + count_null
     output_3 = (
@@ -97,14 +97,11 @@ def test_pipeline():
     expected_8 = test_df_1.pandas_df.drop(columns=["parch", "adult_male"])
     pd.testing.assert_frame_equal(output_8.pandas_df, expected_8)
 
-
     # expected_stdout = 'man\n'
     # captured_stdout = capsys.readouterr().out
     # assert expected_stdout == captured_stdout
-
-
-    assert os.path.exists('drop.csv') == True
-    os.remove('drop.csv')
+    assert os.path.exists("drop.csv")
+    os.remove("drop.csv")
 
     # Others
     print(test_df_1)
@@ -112,5 +109,5 @@ def test_pipeline():
     print(output_9)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test_pipeline()

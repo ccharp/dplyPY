@@ -6,7 +6,6 @@ import numpy as np
 class DplyFrame:
     """
     pandas.DataFrame wrapper for implementing DyplyR style data pipelines.
-
     Here, we simulate dplyr's `%>%` with `+`.
     See pipeline.py for pipeline-function-specific documentation.
     """
@@ -14,7 +13,6 @@ class DplyFrame:
     def __init__(self, pandas_df: pd.DataFrame):
         """
         Create a DplyFrame from a pandas DataFrame
-
         :param pandas_df: the data frame we wish to wrap
         """
         self.pandas_df = pandas_df
@@ -46,14 +44,11 @@ class DplyFrame:
     def __add__(d1, d2_func):
         """
         Chain two or more pipline operations together.
-
         Important: here, `+` operator is NOT commutative
-
         Example:
         ```
         read_csv("foo.csv") + drop(['X']) + query("A" > 1337) + write_csv("transformed_foo.csv")
         ```
-
         :param d1: self--the forst operand of `+`
         :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function)
                   returned by a pipeline method
@@ -70,6 +65,8 @@ class DplyFrame:
 def head(n):
     """
     Returns the first n rows of the dataframe.
+
+    :param n: number of rows to select
     """
     return lambda d1: DplyFrame(d1.pandas_df.head(n))
 
@@ -77,6 +74,8 @@ def head(n):
 def tail(n):
     """
     Returns the last n rows of the dataframe
+
+    :param n: number of rows to select
     """
     return lambda d1: DplyFrame(d1.pandas_df.tail(n))
 
@@ -84,7 +83,6 @@ def tail(n):
 def select(query_str: str):
     """
     Query the columns of a DplyFrame with a boolean expression.
-
     :param query_str: string representation of the query, e.g. 'A > B'
     """
     return lambda d1: DplyFrame(d1.pandas_df.query(query_str))
@@ -93,7 +91,6 @@ def select(query_str: str):
 def mutate(func, axis=0):
     """
     Apply a function along an axis of the DplyFrame.
-
     :param func: the function to appply to each column or row
     :param axis: specifies the axis to which `func` is applied, 0 for 'index', 1 for 'columns'
     """
@@ -103,10 +100,8 @@ def mutate(func, axis=0):
 def drop(labels=None, axis=0, index=None, columns=None):
     """
     Drop rows or columns from the DplyFrame.
-
     Remove rows or columns either by giving the label names and axis,
     or by giving the specific index or column names.
-
     :param labels: the label names of the rows/columns to be dropped. Single or list-like.
     :param axis: 0 or 'index', 1 or 'columns'.
     :param index: the label names of the rows to be dropped. Single or list-like.
@@ -122,9 +117,7 @@ def count_null(column=None, index=None):
     Get total number of null values in a dataframe,
     one or more rows of dataframe,
     or one or more columns of dataframe
-
     Return: a nonnegative integer
-
     :param column: one column name or one list of column names of a dataframe
     :param index: one row name or one list of row names of a dataframe
     """
@@ -141,9 +134,7 @@ def count_null(column=None, index=None):
 
 def drop_na(axis=0, how="any", thresh=None, subset=None):
     """
-    Remove missing values
-
-    Return: processed dataframe
+    Remove missing values of ad dataframe
 
     :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
     :param how: drop rows/columns with any missing value ("any") or all missing values ("all")
@@ -158,9 +149,7 @@ def drop_na(axis=0, how="any", thresh=None, subset=None):
 
 def fill_na(value=None, method=None, axis=0, limit=None):
     """
-    Fill missing values with value
-
-    Return: processed dataframe
+    Fill missing values in a dataframe with value
 
     :param value: used for filling missing values,
                            can be scaler, dict, series, or dataframe,
@@ -190,9 +179,7 @@ def join(
 ):
     """
     Combines two DplyFrames together basaed on a join key
-
     Functions like a SQL join.
-
     :param right: the other DplyFrame to be merged against
     :param how: accepts {‘left’, ‘right’, ‘outer’, ‘inner’, ‘cross’}, default ‘inner’
     :param on: column or index to join on. Must exist in both DplyFrames
@@ -221,10 +208,8 @@ def join(
 def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
-
     Write the DplyFrame to the following file types depending on the file path given:
     .csv, .xlsx, .json and .pkl.
-
     :param file_path: the path of the file with proper suffix
     :param sep: the separator for csv files. Default to be comma
     :param index: Write the row name by the index of the DplyFrame. Default to be true.
@@ -262,7 +247,6 @@ def pivot_table(
 ):
     """
     Create a spreadsheet style pivot table as a DplyFrame
-
     :param values: columns to be aggregated
     :param index: keys to group by on the pivot table index
     :param columns: keys to group by on the pivot table column
@@ -290,7 +274,6 @@ def side_effect(
     e.g. render a plot or do network operation.
     Note that the input function receives a copy of the data frame
     i.e. modifications will not be preserved.
-
     :param side_effect_func: performs the side effect
     """
 
@@ -319,7 +302,6 @@ def gather(
 ):
     """
     Unpivot a dataframe from wide to long format.
-
     :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
     :param value_vars: Columns to unpivot. Default to be all columns not in id_vars.
                        Tuple, list or ndarray.
@@ -348,7 +330,6 @@ def one_hot(
 ):
     """
     Convert categorical variables to indicators
-
     :param prefix: single string or list or dictionary of string to be placed before column names
     :param prefix_sep: separator between prefix and column name
     :param dummy_na: if adding a column for missing values
@@ -372,7 +353,6 @@ def one_hot(
 def filter(boolean_series):
     """
     Cull rows by boolean series. Works similarly to DplyFrame.__get__()
-
     :param boolean_series: must have the same number of rows as the incoming dataframe.
                            Removes rows corresponding to False values in the series.
     """
@@ -382,7 +362,6 @@ def filter(boolean_series):
 def arrange(by, axis=0, ascending=True):
     """
     Sort the dataframe
-
     :param by: mapping, function, label, or list of labels
     :param axis: 0 for index, 1 for columns
     :param ascending: whether or not the data should be sorted in ascending order
