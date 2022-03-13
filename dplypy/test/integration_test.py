@@ -100,10 +100,9 @@ def test_pipeline():
     # expected_stdout = 'man\n'
     # captured_stdout = capsys.readouterr().out
     # assert expected_stdout == captured_stdout
-
     assert os.path.exists("drop.csv")
     os.remove("drop.csv")
-    
+
     # Others
     print(test_df_1)
     output_9 = test_df_1 + select("survived + pclass != 4")
