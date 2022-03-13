@@ -21,7 +21,7 @@ def test_pipeline():
     # melt + pivot_table
     output_1 = (
         test_df_1
-        + melt(id_vars=["who"], value_vars=["fare"])
+        + gather(id_vars=["who"], value_vars=["fare"])
         + pivot_table(index=["who"], values=["value"], aggfunc=min)
     )
     expected_1 = test_df_1.pandas_df.melt(
@@ -34,6 +34,7 @@ def test_pipeline():
         one_hot(columns=["embarked"]) + write_file("one_hot.csv")
     expected_2 = pd.get_dummies(test_df_1.pandas_df, columns=["embarked"])
     pd.testing.assert_frame_equal(output_2.pandas_df, expected_2)
+
     assert os.path.exists("one_hot.csv")
     os.remove("one_hot.csv")
 
@@ -53,8 +54,7 @@ def test_pipeline():
     pd.testing.assert_frame_equal(output_4.pandas_df, expected_4)
 
     # merge + drop_na
-    output_5 = test_df_3 + \
-        merge(test_df_4, on="pclass", how="outer") + drop_na()
+    output_5 = test_df_3 + join(test_df_4, on="pclass", how="outer") + drop_na()
     expected_5 = test_df_3.pandas_df.merge(
         test_df_4.pandas_df, on="pclass", how="outer"
     ).dropna()
@@ -63,7 +63,7 @@ def test_pipeline():
     # merge + fill_na + drop
     output_6 = (
         test_df_3
-        + merge(test_df_4, on="pclass", how="inner")
+        + join(test_df_4, on="pclass", how="inner")
         + fill_na(value=0)
         + drop(columns="sibsp_y")
     )
@@ -80,7 +80,7 @@ def test_pipeline():
         test_df_1
         + one_hot(columns=["class"])
         + select("sex == 'female'")
-        + melt(id_vars="embark_town", value_vars="alive")
+        + gather(id_vars="embark_town", value_vars="alive")
     )
     expected_7 = (
         pd.get_dummies(test_df_1.pandas_df, columns=["class"])
@@ -102,7 +102,6 @@ def test_pipeline():
     # expected_stdout = 'man\n'
     # captured_stdout = capsys.readouterr().out
     # assert expected_stdout == captured_stdout
-
     assert os.path.exists("drop.csv")
     os.remove("drop.csv")
 
