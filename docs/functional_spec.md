@@ -19,7 +19,7 @@ The user is likely someone experienced with dplyr in R but with little experienc
             <li>Drops all rows with null values</li>
             <li>Filters out rows with years before 1950</li>
             <li>Melts years into a single column</li>
-            <li>Pivots categories and associated values to their own columns</li>
+            <li>Pivots categorical variables and associated values to their own columns</li>
             <li>Visualizes missing data after these operations</li>
             <li>Sorts the rows alphabetically by data</li>
             <li>Selects rows with GDP greater than X</li>
