@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, gather
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import gather
 
 
 def test_gather():
@@ -81,20 +82,23 @@ def test_gather():
     gathered_pandas_df_12 = pd.melt(
         pandas_df, id_vars=["A"], value_vars=["B", "C"], var_name="myVarname"
     )
-    gathered_df_12 = df + \
-        gather(id_vars=["A"], value_vars=["B", "C"], var_name="myVarname")
+    gathered_df_12 = df + gather(
+        id_vars=["A"], value_vars=["B", "C"], var_name="myVarname"
+    )
     pd.testing.assert_frame_equal(gathered_pandas_df_12, gathered_df_12.pandas_df)
 
     gathered_pandas_df_13 = pd.melt(
         pandas_df, id_vars=["A"], value_vars=["B"], var_name=["myVarname"]
     )
-    gathered_df_13 = df + \
-        gather(id_vars=["A"], value_vars=["B"], var_name=["myVarname"])
+    gathered_df_13 = df + gather(
+        id_vars=["A"], value_vars=["B"], var_name=["myVarname"]
+    )
     pd.testing.assert_frame_equal(gathered_pandas_df_13, gathered_df_13.pandas_df)
 
     try:
-        df + gather(id_vars=["A"], value_vars=["B"],
-                  var_name=["myValname", "myValname"])
+        df + gather(
+            id_vars=["A"], value_vars=["B"], var_name=["myValname", "myValname"]
+        )
     except IndexError:
         pass
     else:

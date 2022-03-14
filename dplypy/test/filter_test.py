@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, filter
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import filter
 
 
 def test_filter():

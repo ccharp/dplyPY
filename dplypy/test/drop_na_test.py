@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, drop_na
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import drop_na
 
 
 def test_drop_na():

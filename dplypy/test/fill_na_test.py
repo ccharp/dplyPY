@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, fill_na
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import fill_na
 
 
 def test_fill_na():

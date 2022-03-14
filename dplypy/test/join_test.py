@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dplypy.dplypy import DplyFrame, join
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import join
 
 
 def test_join():
@@ -74,8 +75,7 @@ def test_join():
 
     # left_index, right_index
     output4 = df_l + join(df_r, left_index=True, right_index=True)
-    expected4 = df_l.pandas_df.merge(
-        df_r.pandas_df, left_index=True, right_index=True)
+    expected4 = df_l.pandas_df.merge(df_r.pandas_df, left_index=True, right_index=True)
     pd.testing.assert_frame_equal(output4.pandas_df, expected4)
 
     output5 = df_l + join(df_r, left_on="left_key", right_index=True)
@@ -115,8 +115,7 @@ def test_join():
     )
     df_r_new = DplyFrame(
         pd.DataFrame(
-            data={"col1": [1, 2, 3, 5], "col4": [
-                5, 6, 7, 8], "col5": [5, 6, 7, 8]}
+            data={"col1": [1, 2, 3, 5], "col4": [5, 6, 7, 8], "col5": [5, 6, 7, 8]}
         )
     )
 
@@ -126,8 +125,7 @@ def test_join():
     pd.testing.assert_frame_equal(output7.pandas_df, expected7)
 
     output8 = df_l_new + join(df_r_new, on="col1", how="left")
-    expected8 = df_l_new.pandas_df.merge(
-        df_r_new.pandas_df, on="col1", how="left")
+    expected8 = df_l_new.pandas_df.merge(df_r_new.pandas_df, on="col1", how="left")
     pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
     output9 = df_l_new + join(df_r_new, how="right")
@@ -151,16 +149,14 @@ def test_join():
         raise AssertionError("MergeError was not raised")
 
     try:
-        df_l_new + join(df_r_new, left_on="col2",
-                         right_on="col4", how="cross")
+        df_l_new + join(df_r_new, left_on="col2", right_on="col4", how="cross")
     except pd.errors.MergeError:
         pass
     else:
         raise AssertionError("MergeError was not raised")
 
     try:
-        df_l_new + join(df_r_new, left_index=True,
-                         right_index=True, how="cross")
+        df_l_new + join(df_r_new, left_index=True, right_index=True, how="cross")
     except pd.errors.MergeError:
         pass
     else:

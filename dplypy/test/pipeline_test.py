@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 from dplypy.dplypy import *
+from dplypy.pipeline import *
 
 
 def test_head():

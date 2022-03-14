@@ -1,13 +1,13 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, arrange
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import arrange
 
 
 def test_arrange():
     pandas_df = pd.DataFrame(
-        data=[[5, 1, 0], [20, 2, 2], [0, 8, 8], [
-            np.nan, 7, 9], [10, 7, 5], [15, 4, 3]],
+        data=[[5, 1, 0], [20, 2, 2], [0, 8, 8], [np.nan, 7, 9], [10, 7, 5], [15, 4, 3]],
         columns=["col1", "col2", "col3"],
         index=[1, 3, 5, 7, 9, 11],
     )

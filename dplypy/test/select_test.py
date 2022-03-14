@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, select
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import select
 
 
 def test_select():

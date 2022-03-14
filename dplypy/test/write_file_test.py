@@ -3,7 +3,9 @@ import os
 import pandas as pd
 import pytest
 
-from dplypy.dplypy import DplyFrame, write_file
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import write_file
+
 
 def test_write_file():
     pandas_df = pd.DataFrame(

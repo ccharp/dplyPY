@@ -1,12 +1,12 @@
 import pandas as pd
 
-from dplypy.dplypy import DplyFrame, count_null
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import count_null
 
 
 def test_count_null():
     pandas_df1 = pd.DataFrame(
-        data={"col1": [1, 2, 3, None], "col2": [
-            1, 2, 3, 4], "col3": [None, 1, None, 2]}
+        data={"col1": [1, 2, 3, None], "col2": [1, 2, 3, 4], "col3": [None, 1, None, 2]}
     )
 
     df1 = DplyFrame(pandas_df1)
@@ -61,8 +61,7 @@ def test_count_null():
         raise AssertionError("KeyError was not raised")
 
     # no missing value
-    pandas_df2 = pd.DataFrame(
-        data={"col5": [1, 2, 3, 4], "col6": [5, 6, 7, 8]})
+    pandas_df2 = pd.DataFrame(data={"col5": [1, 2, 3, 4], "col6": [5, 6, 7, 8]})
 
     df2 = DplyFrame(pandas_df2)
 

@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dplypy.dplypy import DplyFrame, drop
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import drop
 
 
 def test_drop():

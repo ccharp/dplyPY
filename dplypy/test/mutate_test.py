@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, mutate
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import mutate
 
 
 def test_mutate():
@@ -27,8 +28,7 @@ def test_mutate():
     else:
         raise AssertionError("AssertionError was not raised")
 
-    pandas_df2 = pd.DataFrame(
-        np.array([["a", "b", "c"], [1, 5, np.nan], [6, 7, 8]]))
+    pandas_df2 = pd.DataFrame(np.array([["a", "b", "c"], [1, 5, np.nan], [6, 7, 8]]))
     df2 = DplyFrame(pandas_df2)
 
     output4 = df2 + mutate(np.argmax)

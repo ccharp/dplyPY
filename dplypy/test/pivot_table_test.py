@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, pivot_table
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import pivot_table
 
 
 def test_pivot_table():

@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame, one_hot
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import one_hot
 
 
 def test_one_hot():
@@ -43,14 +44,12 @@ def test_one_hot():
 
     prefix_sep_lst = ["__", "___"]
     output7 = df + one_hot(prefix="p", prefix_sep=prefix_sep_lst)
-    expected7 = pd.get_dummies(
-        pandas_df, prefix="p", prefix_sep=prefix_sep_lst)
+    expected7 = pd.get_dummies(pandas_df, prefix="p", prefix_sep=prefix_sep_lst)
     pd.testing.assert_frame_equal(output7.pandas_df, expected7)
 
     prefix_sep_dict = {"col1": "___", "col2": "__"}
     output8 = df + one_hot(prefix="p", prefix_sep=prefix_sep_dict)
-    expected8 = pd.get_dummies(
-        pandas_df, prefix="p", prefix_sep=prefix_sep_dict)
+    expected8 = pd.get_dummies(pandas_df, prefix="p", prefix_sep=prefix_sep_dict)
     pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
     output9 = df + one_hot(columns=["col1"])

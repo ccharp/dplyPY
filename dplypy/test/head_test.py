@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dplypy.dplypy import head, DplyFrame
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import head
 
 
 def test_head():

@@ -1,6 +1,8 @@
 import pandas as pd
 
-from dplypy.dplypy import DplyFrame, side_effect, s
+from dplypy.dplypy import DplyFrame
+from dplypy.pipeline import side_effect, s
+
 
 def test_side_effect(capsys):
     pandas_df = pd.DataFrame(
