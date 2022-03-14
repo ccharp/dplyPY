@@ -1,7 +1,7 @@
 from typing import Callable
-from dplypy import DplyFrame
 import pandas as pd
 import numpy as np
+from dplypy import DplyFrame
 
 
 def head(n):
