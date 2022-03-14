@@ -23,7 +23,7 @@ The user is likely someone experienced with dplyr in R but with little experienc
             <li>Visualizes missing data after these operations</li>
             <li>Sorts the rows alphabetically by data</li>
             <li>Selects rows with GDP greater than X</li>
-            <li>Writes transformed data to a CSV, Excel, JSON or Pickle file.</li>
+            <li>Writes transformed data to a CSV</li>
         </ol>
     <li>USER: use transformed data in an arbitrary way</li>
   </ol>
