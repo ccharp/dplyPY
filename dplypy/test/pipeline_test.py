@@ -1424,6 +1424,19 @@ def test_slice_row():
     expected5 = pandas_df.iloc[lambda x: x.index % 2 == 1]
     pd.testing.assert_frame_equal(output5.pandas_df, expected5)
 
+    output6 = df + slice_row(1, 3)
+    expected6 = pandas_df.iloc[1:3]
+    pd.testing.assert_frame_equal(output6.pandas_df, expected6)
+
+    output7 = df + slice_row(0, 4)
+    expected7 = pandas_df.iloc[0:4]
+    pd.testing.assert_frame_equal(output7.pandas_df, expected7)
+
+    # Not advisable but should work
+    output8 = df + slice_row(1, 5)
+    expected8 = pandas_df.iloc[1:5]
+    pd.testing.assert_frame_equal(output8.pandas_df, expected8)
+
 
 def test_slice_column():
     pandas_df = pd.DataFrame(
@@ -1469,6 +1482,19 @@ def test_slice_column():
     output5 = df + slice_column(lambda x: [2, 3])
     expected5 = pandas_df.iloc[:, lambda x: [2, 3]]
     pd.testing.assert_frame_equal(output5.pandas_df, expected5)
+
+    output6 = df + slice_column(0, 4)
+    expected6 = pandas_df.iloc[:, 0:4]
+    pd.testing.assert_frame_equal(output6.pandas_df, expected6)
+
+    output7 = df + slice_column(1, 3)
+    expected7 = pandas_df.iloc[:, 1:3]
+    pd.testing.assert_frame_equal(output7.pandas_df, expected7)
+
+    # not advisable but should work
+    output8 = df + slice_column(0, 5)
+    expected8 = pandas_df.iloc[:, 0:5]
+    pd.testing.assert_frame_equal(output8.pandas_df, expected8)
 
 
 if __name__ == "__main__":

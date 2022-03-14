@@ -384,21 +384,27 @@ def row_name_subset(arg):
     return lambda d1: DplyFrame(d1.pandas_df.loc[arg])
 
 
-def slice_row(arg):
+def slice_row(*args):
     """
     Purely integer-location based indexing for row selection by position
 
     :param arg: a list or array of integers,
-                 a boolean array, or a callable function
+                a boolean array, a callable function,
+                or two integers start and end indices
     """
-    return lambda d1: DplyFrame(d1.pandas_df.iloc[arg])
+    if len(args) == 2:
+        return lambda d1: DplyFrame(d1.pandas_df.iloc[args[0] : args[1]])
+    return lambda d1: DplyFrame(d1.pandas_df.iloc[args[0]])
 
 
-def slice_column(arg):
+def slice_column(*args):
     """
     Purely integer-location based indexing for column selection by position
 
     :param arg: a list or array of integers,
-                 a boolean array, or a callable function
+                a boolean array, a callable function,
+                or two integers start and end indices
     """
-    return lambda d1: DplyFrame(d1.pandas_df.iloc[:, arg])
+    if len(args) == 2:
+        return lambda d1: DplyFrame(d1.pandas_df.iloc[:, args[0] : args[1]])
+    return lambda d1: DplyFrame(d1.pandas_df.iloc[:, args[0]])
