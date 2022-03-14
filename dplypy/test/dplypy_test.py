@@ -1,6 +1,6 @@
 import pandas as pd
 
-from dplypy.dplypy import DplyFrame
+from dplypy.dplyframe import DplyFrame
 
 
 def test_init():

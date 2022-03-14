@@ -3,7 +3,7 @@ import os
 import seaborn as sns
 import pandas as pd
 
-from dplypy.dplypy import *
+from dplypy.dplyframe import *
 from dplypy.pipeline import *
 
 

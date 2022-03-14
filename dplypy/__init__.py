@@ -1,2 +1,2 @@
-from dplypy.dplypy import *
+from dplypy.dplyframe import *
 from dplypy.pipeline import *

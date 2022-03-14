@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import pytest
 
-from dplypy.dplypy import DplyFrame
+from dplypy.dplyframe import DplyFrame
 from dplypy.pipeline import write_file
 
 

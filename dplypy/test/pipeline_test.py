@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from dplypy.dplypy import *
+from dplypy.dplyframe import *
 from dplypy.pipeline import *
 
 

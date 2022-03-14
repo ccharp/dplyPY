@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from dplypy.dplypy import DplyFrame
+from dplypy.dplyframe import DplyFrame
 from dplypy.pipeline import arrange
 
 
