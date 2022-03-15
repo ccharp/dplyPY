@@ -123,7 +123,7 @@ def join(
     suffixes=("_x", "_y"),
 ):
     """
-    Combines two DplyFrames together basaed on a join key and return the new DplyFrame
+    Combines two DplyFrames together based on a join key and return the new DplyFrame
     Functions like a SQL join.
 
     :param right: the other DplyFrame to be merged against
@@ -218,7 +218,7 @@ def side_effect(
     side_effect_func: Callable[[DplyFrame], None]
 ) -> Callable[[DplyFrame], DplyFrame]:
     """
-    Allows user to inject aribitrary side effects into the pipeline,
+    Allows user to inject arbitrary side effects into the pipeline,
     e.g. render a plot or do network operation.
     Note that the input function receives a copy of the data frame
     i.e. modifications will not be preserved.
