@@ -26,10 +26,14 @@ For a full list of available pipeline methods, see [the API docs](doc/dplypy/ind
 ```
 ├── LICENSE
 ├── README.md
-├── docs
+├── doc
 │   ├── design_spec.md
 │   ├── dplypy_pres.pdf
-│   └── functional_spec.md
+│   ├── pipeline.py
+│   └── dplypy
+|       ├── dplyframe.md
+│       ├── index.md
+│       └── pipeline.md
 ├── dplypy
 │   ├── __init__.py
 │   ├── dplyframe.py
