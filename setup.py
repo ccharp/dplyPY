@@ -11,5 +11,6 @@ setup(
         "openpyxl>=3.0.9",
         "numpy>=1.22.0",
         "cython>=0.29.23",
+        "missingno>=0.5.1",
     ],
 )
