@@ -1,5 +1,5 @@
 # DplyPy
-![Build](https://github.com/ccharp/dplyPY/actions/workflows/python-package/badge.svg)
+![Build](https://github.com/ccharp/dplyPY/actions/workflows/python-package.yml/badge.svg)
 
 
 The well-known R package, dplyr, offers convenient pipelining methods for data transformations. Data pipelines like this mesh well with the functional programming style R implements: the data transformation becomes a simple chain of functions. This makes compositions of transformations as simple as composing functions. Contrasted against Pandas' OOP-style interface, dplyr pipelines are typically easier to read, understand, and implement.
