@@ -21,7 +21,7 @@ output_df = (
 )
 ```
 
-For a full list of available pipeline methods, see `dplypy/pipeline.py`
+For a full list of available pipeline methods, see [the API docs](doc/dplypy/index.md)
 ### Repository Structure
 ```
 ├── LICENSE
