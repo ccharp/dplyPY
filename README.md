@@ -76,14 +76,13 @@ pre-commit install
 ```
 
 ### Building and uploading the package
-(For fully contextualized instructurs ollow the instructions here: https://packaging.python.org/en/latest/tutorials/packaging-projects/
+(For fully contextualized instructions, follow the instructions here: https://packaging.python.org/en/latest/tutorials/packaging-projects/
 The necessary configuation files are already present.)
 
 Run the following commands in the root repository directory:
 ```
 python3 -m pip install --upgrade build
 python3 -m build
-
 ```
 
 ### Continuous Integration
