@@ -86,4 +86,12 @@ python3 -m build
 ```
 
 ### Continuous Integration
-This project uses Github Actions to run tests. PRs that are untested or fails to build will not be merged.  
+This project uses Github Actions to run tests. PRs that are untested or fails to build will not be merged. 
+
+### Coverage
+Our coverage is 95%. 
+To see detailed report, run the following commands in the root repository directory:
+```
+coverage run -m pytest
+coverage html
+```
