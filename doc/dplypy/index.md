@@ -1,8 +1,8 @@
-Module dplypy
+Package dplypy
 =============
+`DplyFrame` is the data carrier between `pipeline` methods (which are documented [here](pipeline.md).
 
 Sub-modules
 -----------
-* dplypy.dplyframe
-* dplypy.pipeline
-* dplypy.test
+* [DplyFrame](dplyframe.md)
+* [Pipeline](pipeline.md)
