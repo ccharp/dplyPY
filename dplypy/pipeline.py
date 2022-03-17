@@ -1,3 +1,7 @@
+"""
+This module is entirely composed of functions. 
+The literal sum (DplyFrame.__add__()) of these functions is a data pipeline. 
+"""
 from typing import Callable
 import pandas as pd
 import numpy as np
@@ -9,6 +13,7 @@ def head(n):
     Returns the first n rows of a DplyFrame
 
     :param n: number of rows to select
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1.pandas_df.head(n))
 
@@ -18,39 +23,43 @@ def tail(n):
     Returns the last n rows of a DplyFrame
 
     :param n: number of rows to select
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1.pandas_df.tail(n))
 
 
 def select(query_str: str):
     """
-    Query the columns of a DplyFrame with a boolean expression and return the new DplyFrame
+    Query the columns of a DplyFrame with a boolean expression
 
     :param query_str: string representation of the query, e.g. 'A > B'
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1.pandas_df.query(query_str))
 
 
 def mutate(func, axis=0):
     """
-    Apply a function along an axis of the DplyFrame and return the new DplyFrame
+    Apply a function along an axis of the DplyFrame
 
     :param func: the function to appply to each column or row
     :param axis: specifies the axis to which `func` is applied, 0 for 'index', 1 for 'columns'
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1.pandas_df.apply(func=func, axis=axis))
 
 
 def drop(labels=None, axis=0, index=None, columns=None):
     """
-    Drop rows or columns from the DplyFrame and return the new DplyFrame.
+    Drop rows or columns from the DplyFrame
     Remove rows or columns either by giving the label names and axis,
-    or by giving the specific index or column names.
+    or by giving the specific index or column names
 
-    :param labels: the label names of the rows/columns to be dropped. Single or list-like.
-    :param axis: 0 or 'index', 1 or 'columns'.
-    :param index: the label names of the rows to be dropped. Single or list-like.
-    :param columns: the column names of the rows to be dropped. Single or list-like.
+    :param labels: the label names of the rows/columns to be dropped. Single or list-like
+    :param axis: 0 or 'index', 1 or 'columns'
+    :param index: the label names of the rows to be dropped. Single or list-like
+    :param columns: the column names of the rows to be dropped. Single or list-like
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.drop(labels=labels, axis=axis, index=index, columns=columns)
@@ -62,9 +71,9 @@ def count_null(column=None, index=None):
     Get total number of null values in a DplyFrame,
     one or more rows of DplyFrame,
     or one or more columns of DplyFrame
-    Return: a nonnegative integer
     :param column: one column name or one list of column names of a DplyFrame
     :param index: one row name or one list of row names of a DplyFrame
+    :return: a nonnegative integer
     """
 
     def _count_null(d1, column=None, index=None):
@@ -79,13 +88,14 @@ def count_null(column=None, index=None):
 
 def drop_na(axis=0, how="any", thresh=None, subset=None):
     """
-    Remove missing values of a DplyFrame and return the new DplyFrame
+    Remove missing values of a DplyFrame
 
     :param axis: drop rows (0 or "index") or columns (1 or "columns") with default value 0
     :param how: drop rows/columns with any missing value ("any") or all missing values ("all")
     :param thresh: drop rows/columns with at least thresh amount of missing values
     :param subset: drop missing values only in subset of rows/columns,
                    where rows/columns correspond to the other axis
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.dropna(axis=axis, how=how, thresh=thresh, subset=subset)
@@ -94,7 +104,7 @@ def drop_na(axis=0, how="any", thresh=None, subset=None):
 
 def fill_na(value=None, method=None, axis=0, limit=None):
     """
-    Fill missing values in a DplyFrame with value and return the new DplyFrame
+    Fill missing values in a DplyFrame with value
 
     :param value: used for filling missing values,
                            can be scaler, dict, series, or dataframe,
@@ -105,6 +115,7 @@ def fill_na(value=None, method=None, axis=0, limit=None):
     :param limit: must be positive if not None.
                   If method is not None, it is the maximum consecutive missing values to fill;
                   otherwise, it fills at most limit number of missing values along the entire axis
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.fillna(value=value, method=method, axis=axis, limit=limit)
@@ -123,7 +134,7 @@ def join(
     suffixes=("_x", "_y"),
 ):
     """
-    Combines two DplyFrames together based on a join key and return the new DplyFrame
+    Combines two DplyFrames together based on a join key
     Functions like a SQL join.
 
     :param right: the other DplyFrame to be merged against
@@ -135,6 +146,7 @@ def join(
     :param right_index: index of the right DplyFrame to be used as the join key
     :param sort: if true, sort the keys in lexigraphical order
     :param suffixes: suffix to be applied to variables in left and right DplyFrames
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.merge(
@@ -155,11 +167,12 @@ def write_file(file_path, sep=",", index=True):
     """
     Write DplyFrame to file.
     Write the DplyFrame to the following file types depending on the file path given:
-    .csv, .xlsx, .json and .pkl.
+    .csv, .xlsx, .json and .pkl
 
     :param file_path: the path of the file with proper suffix
     :param sep: the separator for csv files. Default to be comma
-    :param index: Write the row name by the index of the DplyFrame. Default to be true.
+    :param index: Write the row name by the index of the DplyFrame. Default to be true
+    :return: a function that returns the original DplyFrame
     """
 
     def to_csv(d1):
@@ -193,7 +206,7 @@ def pivot_table(
     values=None, index=None, columns=None, aggfunc="mean", fill_value=None, dropna=True
 ):
     """
-    Create a spreadsheet style pivot table as a DplyFrame and return a new DplyFrame
+    Create a spreadsheet style pivot table as a DplyFrame
 
     :param values: columns to be aggregated
     :param index: keys to group by on the pivot table index
@@ -201,6 +214,7 @@ def pivot_table(
     :param aggfunc: aggregation functions
     :param fill_value: the value to replace the nan values in the table after aggregation
     :param whether to drop the columns with all nan values
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.pivot_table(
@@ -224,6 +238,7 @@ def side_effect(
     i.e. modifications will not be preserved.
 
     :param side_effect_func: performs the side effect
+    :return: a function that returns the original DplyFrame
     """
 
     def d2_func(d1: DplyFrame):
@@ -241,7 +256,7 @@ def s(
     side_effect_func: Callable[[DplyFrame], None]
 ) -> Callable[[DplyFrame], DplyFrame]:
     """
-    convenience method fof `side_effect()`. See `side_effect for operational details.
+    Convenience method for `side_effect()`. See `side_effect` for operational details.
     """
     return side_effect(side_effect_func)
 
@@ -252,12 +267,13 @@ def gather(
     """
     Unpivot a DplyFrame from wide to long format.
 
-    :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray.
+    :param id_vars: Column(s) being used as identifier variables. Tuple, list or ndarray
     :param value_vars: Columns to unpivot. Default to be all columns not in id_vars.
-                       Tuple, list or ndarray.
-    :param var_name: Name of the variable column.
-    :param value_name: Name of the value column.
-    :param ignore_index: Original index would be ignored if True; else otherwise.
+                       Tuple, list or ndarray
+    :param var_name: Name of the variable column
+    :param value_name: Name of the value column
+    :param ignore_index: Original index would be ignored if True; else otherwise
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.melt(
@@ -287,6 +303,7 @@ def one_hot(
     :param columns: column names being encoded with default None, i.e. considering everything
     :param drop_first: if removing first indicator column
     :param dtype: only one type for new columns with default unsigned 8-bit integer
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         pd.get_dummies(
@@ -306,7 +323,8 @@ def filter(boolean_series):
     Cull rows by boolean series and return a new DplyFrame. Works similarly to DplyFrame.__get__()
 
     :param boolean_series: must have the same number of rows as the incoming DplyFrame.
-                           Removes rows corresponding to False values in the series.
+                           Removes rows corresponding to False values in the series
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1[boolean_series])
 
@@ -319,6 +337,7 @@ def arrange(by, axis=0, ascending=True):
     :param axis: 0 for index, 1 for columns
     :param ascending: whether or not the data should be sorted in ascending order
                       (False for descending)
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(
         d1.pandas_df.sort_values(by=by, axis=axis, ascending=ascending)
@@ -327,12 +346,12 @@ def arrange(by, axis=0, ascending=True):
 
 def row_name_subset(arg):
     """
-    slice a DplyFrame access rows by index names and return a new DplyFrame
+    Slice a DplyFrame access rows by index names and return a new DplyFrame
 
     :param args: a list or array of row names,
                  an alignable boolean series,
                  or an alignable index
-
+    :return: a function that returns a new DplyFrame
     """
     return lambda d1: DplyFrame(d1.pandas_df.loc[arg])
 
@@ -340,11 +359,11 @@ def row_name_subset(arg):
 def slice_row(*args):
     """
     Purely integer-location based indexing for row selection by position.
-    Return a new DplyFrame.
 
-    :param arg: a list or array of integers,
-                a boolean array, a callable function,
-                or two integers start and end indices
+    :param args: a list or array of integers,
+                 a boolean array, a callable function,
+                 or two integers start and end indices
+    :return: a function that returns a new DplyFrame
     """
     if len(args) == 2:
         return lambda d1: DplyFrame(d1.pandas_df.iloc[args[0] : args[1]])
@@ -354,11 +373,11 @@ def slice_row(*args):
 def slice_column(*args):
     """
     Purely integer-location based indexing for column selection by position.
-    Return a new DplyFrame
 
-    :param arg: a list or array of integers,
-                a boolean array, a callable function,
-                or two integers start and end indices
+    :param args: a list or array of integers,
+                 a boolean array, a callable function,
+                 or two integers start and end indices
+    :return: a function that returns a new DplyFrame
     """
     if len(args) == 2:
         return lambda d1: DplyFrame(d1.pandas_df.iloc[:, args[0] : args[1]])

@@ -1,3 +1,4 @@
+"""DplyFrame represents the dataframe we want to transform."""
 import pandas as pd
 
 
@@ -48,7 +49,7 @@ class DplyFrame:
         read_csv("foo.csv") + drop(['X']) + query("A" > 1337) + write_csv("transformed_foo.csv")
         ```
         :param d1: self--the forst operand of `+`
-        :d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function)
+        :param d2_func: lazily evaluated DplyFrame (DplyFrame wrapped in a function)
                   returned by a pipeline method
         """
         return d2_func(d1)

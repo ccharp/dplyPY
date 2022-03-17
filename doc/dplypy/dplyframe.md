@@ -1,18 +1,17 @@
-Module dplypy.dplyframe
-=======================
+## Module dplypy.dplyframe
+DplyFrame represents the dataframe we want to transform.
+### Class `DplyFrame(pandas_df: pandas.core.frame.DataFrame):`
+#### Description
+`pandas.DataFrame` wrapper for implementing DplyR style data pipelines.
 
-Classes
--------
+Here, we simulate dplyr's `%>%` with `+`.
 
-`DplyFrame(pandas_df: pandas.core.frame.DataFrame)`
-:   pandas.DataFrame wrapper for implementing DyplyR style data pipelines.
-    Here, we simulate dplyr's `%>%` with `+`.
-    See pipeline.py for pipeline-function-specific documentation.
-    
-    Create a DplyFrame from a pandas DataFrame
-    :param pandas_df: the data frame we wish to wrap
+See pipeline.py for pipeline-function-specific documentation.
 
-    ### Methods
+#### Initialization
+Create a DplyFrame from a pandas DataFrame
+###### Parameter
+pandas_df: the data frame we wish to wrap
 
-    `deep_copy(self)`
-    :
+#### Method
+`deep_copy(self)`
