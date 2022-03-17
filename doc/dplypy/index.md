@@ -1,6 +1,6 @@
 Package dplypy
 =============
-`DplyFrame` is the data carrier between `pipeline` methods (which are documented [here](pipeline.md).
+`DplyFrame` is the data carrier between `pipeline` methods (which are documented [here](pipeline.md)).
 
 Sub-modules
 -----------
