@@ -28,8 +28,8 @@ The user is likely someone experienced with dplyr in R but with little experienc
     <li>USER: use transformed data in an arbitrary way</li>
   </ol>
 </li>
-<li>
-  <ol>Auditable data provenance: regulation demands breadcrumb trail of transformation in the previous example
+<li>Auditable data provenance: regulation demands breadcrumb trail of transformation in the previous example
+  <ol>
     <li>USER: Implements function `log` that takes a dataframe and logs it (locally, Logstash, etc.)</li>
     <li>USER: intersperses `side_effect` method between all transformations in the previous pipeline, passing in `log.`</li>
   </ol>
