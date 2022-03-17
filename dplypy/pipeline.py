@@ -1,6 +1,6 @@
 """
-This module is entirely composed of functions. 
-The literal sum (DplyFrame.__add__()) of these functions is a data pipeline. 
+This module is entirely composed of functions.
+The literal sum (DplyFrame.__add__()) of these functions is a data pipeline.
 """
 from typing import Callable
 import pandas as pd

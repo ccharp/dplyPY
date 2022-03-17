@@ -1,5 +1,4 @@
 ## Module dplypy.dplyframe
-### Description
 DplyFrame represents the dataframe we want to transform.
 ### Class `DplyFrame(pandas_df: pandas.core.frame.DataFrame)`:
 #### Description
